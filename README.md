@@ -5,6 +5,7 @@ Just an experimental project to see what you run into when generating several la
 ## Supported languages
 
 - GoLang
+- Groovy
 - Julia
 - Kotlin
 - Node
@@ -18,7 +19,6 @@ List of languages that we may generate
 
 - C
 - C++
-- Groovy
 - Java
 - C#
 - Elixir
@@ -26,7 +26,7 @@ List of languages that we may generate
 - 
 ## Challenges
 
-Way to many.
+Way too many.
 
 - Language specific optimizations or syntactic sugar
 - Reordering, for example generating imports and packages at top level
