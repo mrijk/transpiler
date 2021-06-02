@@ -1,27 +1,24 @@
-function cond({options}) {
+function* cond({options}) {
     const count = options.length
 
     switch (count) {
     case 1:
-        return [
-            `if (${options[0].predicate}) {`,
-            `  ${options[0].expr}`,
-            '}'
-        ]
+        yield `if (${options[0].predicate}) {`
+        yield `  ${options[0].expr}`
+        yield '}'
     case 2:
-        return [
-            `if (${options[0].predicate}) {`,
-            `  ${options[0].expr}`,
-            `} else {`,
-            `  ${options[1].expr}`,
-            `}`
-        ]
+        yield `if (${options[0].predicate}) {`
+        yield `  ${options[0].expr}`
+        yield `} else {`
+        yield `  ${options[1].expr}`
+        yield `}`
     default:
-        return [
-            `when {`,
-            `    else -> ${options[count - 1].expr}`,
-            '}'
-        ]
+        yield `when {`
+        for (i = 0; i < count -1; i++) {
+            yield `  ${options[i].predicate} -> ${options[i].expr}`
+        }
+        yield `  else -> ${options[count - 1].expr}`
+        yield '}'
     }
 }
 
@@ -40,7 +37,7 @@ const kotlin = {
 
     decl: ({name, type, value}) => `val ${name} = ${value}`,
 
-    cond: cond    
+    cond
 }
 
 module.exports = {

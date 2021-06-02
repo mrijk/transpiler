@@ -23,8 +23,8 @@ function parseExpr(main, generator) {
     }
 
     if (main.cond != null) {
-        const cond = generator.cond(main.cond)
-        cond.forEach(c => out(c, 1))
+        for (c of generator.cond(main.cond))
+            out(c, 1)
     }
 }
 
@@ -56,4 +56,4 @@ function generate(ast, generator) {
     parseMain(ast, generator)
 }
 
-generate(ast, kotlin)
+generate(ast, julia)
