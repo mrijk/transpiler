@@ -1,3 +1,17 @@
+function cond({options}) {
+    if (options.count == 2) {
+        return [
+            `if (${options[0].predicate}) {`,
+            `  ${options[0].expr}`,
+            `} else {`,
+            `  ${options[1].expr}`,
+            `}`
+        ]
+    } else {
+        return []
+    }
+}
+
 const node = {
     comment: comment => `// ${comment}`,
 
@@ -15,14 +29,7 @@ const node = {
     
     decl: ({name, type, value}) => `const ${name} = ${value}`,
     
-    cond: ({options}) =>
-    [
-        `if (${options[0].predicate}) {`,
-        `  ${options[0].expr}`,
-        `} else {`,
-        `  ${options[1].expr}`,
-        `}`
-    ]  
+    cond: cond
 }
 
 module.exports = {

@@ -7,7 +7,7 @@ const {python} = require('./generator/python')
 const {ruby} = require('./generator/ruby')
 const {swift} = require('./generator/swift')
 
-const {ast} = require('./asts/ast1')
+const {ast} = require('./asts/ast2')
 
 
 function out(s, indent = 0) {
@@ -56,4 +56,4 @@ function generate(ast, generator) {
     parseMain(ast, generator)
 }
 
-generate(ast, groovy)
+generate(ast, kotlin)
