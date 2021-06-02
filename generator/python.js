@@ -1,3 +1,10 @@
+function* cond({options}) {
+    yield `if ${options[0].predicate}:`
+    yield `  ${options[0].expr}`
+    yield `else:`
+    yield `  ${options[1].expr}`
+}
+
 const python = {
     comment: comment => `# ${comment}`,
 
@@ -14,13 +21,7 @@ const python = {
 
     decl: ({name, type, value}) => `${name} = ${value}`,
 
-    cond: ({options}) =>
-    [
-        `if ${options[0].predicate}:`,
-        `  ${options[0].expr}`,
-        `else:`,
-        `  ${options[1].expr}`
-    ]    
+    cond
 }
 
 module.exports = {

@@ -56,4 +56,4 @@ function generate(ast, generator) {
     parseMain(ast, generator)
 }
 
-generate(ast, julia)
+generate(ast, python)
