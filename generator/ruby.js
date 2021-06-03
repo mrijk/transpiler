@@ -1,9 +1,18 @@
+const fmap = new Map([
+    ['print', 'puts']
+])
+
 function* cond({options}) {
     yield `if ${options[0].predicate}`
     yield `  ${options[0].expr}`
     yield `else`
     yield `  ${options[1].expr}`
     yield `end`
+}
+
+function* fcall({name, params}) {
+    const fname = fmap.get(name) || name
+    yield `${fname} "${params[0]}"`
 }
 
 const ruby = {
@@ -23,7 +32,8 @@ const ruby = {
 
     decl: ({name, type, value}) => `${name} = ${value}`,
     
-    cond 
+    cond,
+    fcall
 }
 
 module.exports = {

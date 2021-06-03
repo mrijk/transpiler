@@ -5,9 +5,10 @@ const {kotlin} = require('./generator/kotlin')
 const {node} = require('./generator/node')
 const {python} = require('./generator/python')
 const {ruby} = require('./generator/ruby')
+const {rust} = require('./generator/rust')
 const {swift} = require('./generator/swift')
 
-const {ast} = require('./asts/ast2')
+const {ast} = require('./asts/ast3')
 
 
 function out(s, indent = 0) {
@@ -42,10 +43,23 @@ function parseFunctions({functions}, generator) {
     functions.forEach(f => parseFunction(f, generator))
 }
 
+function parseStmt(stmt, generator) {
+    if (stmt.type === 'fcall') {
+        for (l of generator.fcall(stmt))
+            out(l, 1)
+    }
+}
+
+function parseBody({stmts}, generator) {
+    stmts.forEach(stmt => parseStmt(stmt, generator))
+    
+}
+
 function parseMain(ast, generator) {
     if (ast.main != null) {
         const {start, end} = generator.main
         out(start)
+        parseBody(ast.main, generator)
         parseExpr(ast.main, generator)
         out(end)
     }
@@ -56,4 +70,4 @@ function generate(ast, generator) {
     parseMain(ast, generator)
 }
 
-generate(ast, python)
+generate(ast, julia)

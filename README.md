@@ -11,6 +11,7 @@ Just an experimental project to see what you run into when generating several la
 - Node
 - Python
 - Ruby
+- Rust
 - Swift
 
 ## Upcoming languages
