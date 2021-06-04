@@ -1,5 +1,6 @@
 const _ = require('lodash')
 
+const {C} = require('./generator/c')
 const {go} = require('./generator/go')
 const {julia} = require('./generator/julia')
 const {groovy} = require('./generator/groovy')
@@ -42,8 +43,23 @@ function parseFunction(f, generator) {
     }
 }
 
+function* parseFunction2(f, generator) {
+    if (generator.fdecl) {
+        yield* generator.fdecl(f)
+        yield ""
+    } else {
+        yield generator.comment('fdecl not implemented yet!')
+    }
+}
+
+
 function parseFunctions({functions}, generator) {
-    functions.forEach(f => parseFunction(f, generator))
+    //    functions.forEach(f => parseFunction(f, generator))
+
+    functions.forEach(f => {
+        for (l of parseFunction2(f, generator))
+            out(l)
+    })
 }
 
 function* parseStmt(stmt, generator) {
@@ -73,4 +89,4 @@ function generate(ast, generator) {
     parseMain(ast, generator)
 }
 
-generate(ast, swift)
+generate(ast, ruby)

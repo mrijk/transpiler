@@ -1,5 +1,9 @@
 const ast = {
     functions: [
+        {name: "funtionOne",
+         params: [],
+         body: []
+        }
     ],
     
     main: {

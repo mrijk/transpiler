@@ -4,6 +4,7 @@ Just an experimental project to see what you run into when generating several la
 
 ## Supported languages
 
+- C
 - GoLang
 - Groovy
 - Julia
@@ -19,7 +20,6 @@ Just an experimental project to see what you run into when generating several la
 
 List of languages that we may generate
 
-- C
 - C++
 - Java
 - C#
@@ -31,6 +31,9 @@ List of languages that we may generate
 Way too many.
 
 - Language specific optimizations or syntactic sugar
+  - yield
+  - parameter destructing
+  - etc.
 - Reordering, for example generating imports and packages at top level
 - Dynamic versus static languages
 - OO versus FP or procedural languages

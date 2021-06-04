@@ -23,6 +23,11 @@ function* fcall({name, params}) {
     yield `${fname} "${params[0]}"`
 }
 
+function* fdecl({name, params, body}) {
+    yield `def ${name}()`
+    yield `end`    
+}
+
 const ruby = {
     comment: comment => `# ${comment}`,
 
@@ -36,7 +41,8 @@ const ruby = {
 
     main,
     cond,
-    fcall
+    fcall,
+    fdecl
 }
 
 module.exports = {
