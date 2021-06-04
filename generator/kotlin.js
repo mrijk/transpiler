@@ -1,3 +1,7 @@
+const fmap = new Map([
+    ['print', 'println']
+])
+
 function* cond({options}) {
     const count = options.length
 
@@ -22,6 +26,11 @@ function* cond({options}) {
     }
 }
 
+function* fcall({name, params}) {
+    const fname = fmap.get(name) || name
+    yield `${fname}("${params[0]}")`
+}
+
 const kotlin = {
     comment: comment => `// ${comment}`,
 
@@ -37,7 +46,8 @@ const kotlin = {
 
     decl: ({name, type, value}) => `val ${name} = ${value}`,
 
-    cond
+    cond,
+    fcall
 }
 
 module.exports = {

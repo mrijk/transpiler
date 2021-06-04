@@ -1,3 +1,7 @@
+const fmap = new Map([
+    ['print', 'console.log']
+])
+
 function cond({options}) {
     if (options.count == 2) {
         return [
@@ -12,6 +16,11 @@ function cond({options}) {
     }
 }
 
+function* fcall({name, params}) {
+    const fname = fmap.get(name) || name
+    yield `${fname}("${params[0]}")`
+}
+
 const node = {
     comment: comment => `// ${comment}`,
 
@@ -22,14 +31,16 @@ const node = {
     ],
     
     main: {
-        start: "function main() {",
-        end: "}"
+        start: 'function main() {',
+        end: '}\n\n' +
+            'main()'
     },
 
     
     decl: ({name, type, value}) => `const ${name} = ${value}`,
     
-    cond: cond
+    cond,
+    fcall
 }
 
 module.exports = {
