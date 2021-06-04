@@ -2,6 +2,12 @@ const fmap = new Map([
     ['print', 'println']
 ])
 
+function* main({stmts}, parseBody) {
+    yield 'fun main() {'
+    yield* parseBody(stmts)
+    yield '}'
+}
+
 function* cond({options}) {
     const count = options.length
 
@@ -39,13 +45,9 @@ const kotlin = {
         `}`
     ],
     
-    main: {
-        start: 'fun main() {',
-        end  : '}'
-    },
-
     decl: ({name, type, value}) => `val ${name} = ${value}`,
 
+    main,
     cond,
     fcall
 }

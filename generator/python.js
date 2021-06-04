@@ -1,8 +1,24 @@
+const fmap = new Map([
+    ['print', 'print']
+])
+
 function* cond({options}) {
     yield `if ${options[0].predicate}:`
     yield `  ${options[0].expr}`
     yield `else:`
     yield `  ${options[1].expr}`
+}
+
+function* main({stmts}, parseBody) {
+    yield `def main():`
+    yield* parseBody(stmts)
+    yield 'if __name__ == "__main__"'
+    yield '  main()'
+}
+
+function* fcall({name, params}) {
+    const fname = fmap.get(name) || name
+    yield `${fname}("${params[0]}")`
 }
 
 const python = {
@@ -12,16 +28,12 @@ const python = {
         `def ${name}():`,
         `  pass`
     ],
-    
-    main: {
-        start: `def main():`,
-        end: '\nif __name__ == "__main__":\n' +
-            '  main()'
-    },
 
     decl: ({name, type, value}) => `${name} = ${value}`,
 
-    cond
+    main,
+    cond,
+    fcall
 }
 
 module.exports = {

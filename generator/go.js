@@ -2,6 +2,14 @@ const fmap = new Map([
     ['print', 'println']
 ])
 
+function* main({stmts}, parseBody) {
+    yield 'package main'
+    yield ''
+    yield 'func main() {'
+    yield* parseBody(stmts)
+    yield '}'
+}
+
 function* cond({options}) {
     yield `if ${options[0].predicate} {`
     yield `  ${options[0].expr}`
@@ -23,16 +31,10 @@ const go = {
         `func ${name}() {`,
         `}`
     ],
-    
-    main: {
-        start: "package main\n\n" + 
-            "func main() {",
-        end: "}"
-    },
 
-    
     decl: ({name, type, value}) => `var ${name} ${type} = ${value}`,
     
+    main,
     cond,
     fcall
 }

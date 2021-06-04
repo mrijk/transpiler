@@ -2,6 +2,14 @@ const fmap = new Map([
     ['print', 'puts']
 ])
 
+function* main({stmts}, parseBody) {
+    yield 'def main()'
+    yield* parseBody(stmts)
+    yield 'end'
+    yield ''
+    yield 'main'
+}
+
 function* cond({options}) {
     yield `if ${options[0].predicate}`
     yield `  ${options[0].expr}`
@@ -23,15 +31,10 @@ const ruby = {
         `def ${name}()`,
         `end`
     ],
-    
-    main: {
-        start: `def main()`,
-        end: `end\n\n` +
-            `main`
-    },
 
     decl: ({name, type, value}) => `${name} = ${value}`,
-    
+
+    main,
     cond,
     fcall
 }

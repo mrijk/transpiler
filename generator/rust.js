@@ -2,6 +2,12 @@ const fmap = new Map([
     ['print', 'println!']
 ])
 
+function* main({stmts}, parseBody) {
+    yield 'fn main() {'
+    yield* parseBody(stmts)
+    yield '}'
+}
+
 function* cond({options}) {
     yield `if ${options[0].predicate} {`
     yield `  ${options[0].expr}`
@@ -23,15 +29,10 @@ const rust = {
         `fn ${name}() {`,
         `}`
     ],
-    
-    main: {
-        start: "fn main() {",
-        end: "}"
-    },
 
-    
     decl: ({name, type, value}) => `let ${name} = ${value};`,
-    
+
+    main,
     cond,
     fcall
 }

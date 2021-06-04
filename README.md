@@ -9,6 +9,7 @@ Just an experimental project to see what you run into when generating several la
 - Julia
 - Kotlin
 - Node
+- Perl (really????)
 - Python
 - Ruby
 - Rust

@@ -2,6 +2,14 @@ const fmap = new Map([
     ['print', 'console.log']
 ])
 
+function* main({stmts}, parseBody) {
+    yield 'function main() {'
+    yield* parseBody(stmts)
+    yield '}'
+    yield ''
+    yield 'main()'
+}
+
 function cond({options}) {
     if (options.count == 2) {
         return [
@@ -30,15 +38,9 @@ const node = {
         `}`
     ],
     
-    main: {
-        start: 'function main() {',
-        end: '}\n\n' +
-            'main()'
-    },
-
-    
     decl: ({name, type, value}) => `const ${name} = ${value}`,
     
+    main,
     cond,
     fcall
 }

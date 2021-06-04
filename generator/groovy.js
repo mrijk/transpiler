@@ -2,6 +2,14 @@ const fmap = new Map([
     ['print', 'println']
 ])
 
+function* main({stmts}, parseBody) {
+    yield 'def main() {'
+    yield* parseBody(stmts)
+    yield '}'
+    yield ''
+    yield 'main()'
+}
+
 function* cond({options}) {
     yield `if (${options[0].predicate}) {`
     yield `  ${options[0].expr}`
@@ -24,16 +32,9 @@ const groovy = {
         `}`
     ],
     
-    main: {
-        start: 'def main() {',
-        end: '}\n\n' +
-            'main()'
-            
-    },
-
-    
     decl: ({name, type, value}) => `def ${name} = ${value}`,
-    
+
+    main,
     cond,
     fcall
 }

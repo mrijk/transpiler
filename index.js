@@ -1,8 +1,11 @@
+const _ = require('lodash')
+
 const {go} = require('./generator/go')
 const {julia} = require('./generator/julia')
 const {groovy} = require('./generator/groovy')
 const {kotlin} = require('./generator/kotlin')
 const {node} = require('./generator/node')
+const {perl} = require('./generator/perl')
 const {python} = require('./generator/python')
 const {ruby} = require('./generator/ruby')
 const {rust} = require('./generator/rust')
@@ -43,25 +46,25 @@ function parseFunctions({functions}, generator) {
     functions.forEach(f => parseFunction(f, generator))
 }
 
-function parseStmt(stmt, generator) {
+function* parseStmt(stmt, generator) {
     if (stmt.type === 'fcall') {
-        for (l of generator.fcall(stmt))
-            out(l, 1)
+        yield* generator.fcall(stmt)
     }
 }
 
-function parseBody({stmts}, generator) {
-    stmts.forEach(stmt => parseStmt(stmt, generator))
-    
+function* parseBody(stmts, generator) {
+    yield* stmts.map(stmt => Array.from(parseStmt(stmt, generator)))
 }
 
 function parseMain(ast, generator) {
     if (ast.main != null) {
-        const {start, end} = generator.main
-        out(start)
+        for (l of generator.main(ast.main, _.partialRight(parseBody, generator)))
+            out(l)
+        
+        /*
         parseBody(ast.main, generator)
         parseExpr(ast.main, generator)
-        out(end)
+        */
     }
 }
 

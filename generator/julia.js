@@ -2,6 +2,14 @@ const fmap = new Map([
     ['print', 'println']
 ])
 
+function* main({stmts}, parseBody) {
+    yield "function main()"
+    yield* parseBody(stmts)
+    yield "end"
+    yield ''
+    yield 'main()'
+}
+
 function* cond({options}) {
     const count = options.length
 
@@ -25,19 +33,14 @@ function* fcall({name, params}) {
 const julia = {
     comment: comment => `# ${comment}`,
     
-    main: {
-        start: "function main()",
-        end: "end\n\n" +
-            "main()"
-    },
-
     functionDecl: ({name, params, body}) => [
         `function ${name}()`,
         `end`
     ],
     
     decl: ({name, type, value}) => `${name} = ${value}`,
-    
+
+    main,
     cond,
     fcall
 }

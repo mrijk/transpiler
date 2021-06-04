@@ -3,9 +3,11 @@ const fmap = new Map([
 ])
 
 function* main({stmts}, parseBody) {
-    yield 'func main() {'
+    yield 'sub Main() {'
     yield* parseBody(stmts)
     yield '}'
+    yield ''
+    yield 'Main()'
 }
 
 function* cond({options}) {
@@ -18,18 +20,18 @@ function* cond({options}) {
 
 function* fcall({name, params}) {
     const fname = fmap.get(name) || name
-    yield `${fname}("${params[0]}")`
+    yield `${fname} "${params[0]}";`
 }
 
-const swift = {
+const perl = {
     comment: comment => `# ${comment}`,
 
 
     functionDecl: ({name, params, body}) => [
-        `func ${name}() {`,
+        `sub ${name}() {`,
         `}`
     ],
-
+    
     decl: ({name, type, value}) => `var ${name} = ${value}`,
 
     main,
@@ -38,5 +40,5 @@ const swift = {
 }
 
 module.exports = {
-    swift
+    perl
 }
