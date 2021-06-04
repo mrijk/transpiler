@@ -1,6 +1,6 @@
 const ast = {
     functions: [
-        {name: "funtionOne",
+        {name: "functionOne",
          params: [],
          body: []
         }
@@ -8,6 +8,11 @@ const ast = {
     
     main: {
         stmts: [
+            {
+                type: "fcall",
+                name: "functionOne",
+                params: []
+            },
             {
                 type: "fcall",
                 name: "print",
