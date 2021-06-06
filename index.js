@@ -86,4 +86,4 @@ function generate({package}, generator) {
     parseFunctions(package, generator)
 }
 
-generate(ast, C)
+generate(ast, kotlin)

@@ -12,15 +12,6 @@ function comment(comment) {
     return `/* ${comment} */`
 }
 
-function* main({stmts}, parseBody) {
-    yield '#include <stdio.h>'
-    yield ''
-    yield 'int main() {'
-    yield* parseBody(stmts)
-    yield 'return 0;'
-    yield '}'
-}
-
 function* cond({options}) {
     yield `if ${options[0].predicate} {`
     yield `  ${options[0].expr}`

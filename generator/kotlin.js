@@ -1,11 +1,13 @@
+const {isEmpty, join} = require('lodash')
+
+const {parseBody} = require('./shared/shared')
+
 const fmap = new Map([
     ['print', 'println']
 ])
 
-function* main({stmts}, parseBody) {
-    yield 'fun main() {'
-    yield* parseBody(stmts)
-    yield '}'
+function comment(comment) {
+    return `// ${comment}`
 }
 
 function* cond({options}) {
@@ -37,19 +39,21 @@ function* fcall({name, params}) {
     yield `${fname}("${params[0]}")`
 }
 
-const kotlin = {
-    comment: comment => `// ${comment}`,
+function* fdecl({name, params, body}) {
+    yield `fun ${name}() {`
+    yield* parseBody(body, kotlin)
+    yield '}'
+}
 
-    functionDecl: ({name, params, body}) => [
-        `fun ${name}() {`,
-        `}`
-    ],
+const kotlin = {
+    language: 'Kotlin',
     
     decl: ({name, type, value}) => `val ${name} = ${value}`,
 
-    main,
+    comment,
     cond,
-    fcall
+    fcall,
+    fdecl
 }
 
 module.exports = {

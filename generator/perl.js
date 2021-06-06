@@ -1,13 +1,13 @@
+const {isEmpty, join} = require('lodash')
+
+const {parseBody} = require('./shared/shared')
+
 const fmap = new Map([
     ['print', 'print']
 ])
 
-function* main({stmts}, parseBody) {
-    yield 'sub Main() {'
-    yield* parseBody(stmts)
-    yield '}'
-    yield ''
-    yield 'Main()'
+function comment(comment) {
+    return `# ${comment}`
 }
 
 function* cond({options}) {
@@ -23,20 +23,25 @@ function* fcall({name, params}) {
     yield `${fname} "${params[0]}";`
 }
 
+function* fdecl({name, params, body}) {
+    yield 'sub Main() {'
+    yield* parseBody(body, perl)
+    yield '}'
+    if (name === 'main') {
+        yield ''
+        yield 'Main()'
+    }
+}
+
 const perl = {
-    comment: comment => `# ${comment}`,
-
-
-    functionDecl: ({name, params, body}) => [
-        `sub ${name}() {`,
-        `}`
-    ],
+    language: 'Perl',
     
     decl: ({name, type, value}) => `var ${name} = ${value}`,
 
-    main,
+    comment,
     cond,
-    fcall
+    fcall,
+    fdecl
 }
 
 module.exports = {
