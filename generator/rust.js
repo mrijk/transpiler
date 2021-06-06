@@ -1,3 +1,7 @@
+const {isEmpty, join} = require('lodash')
+
+const {parseBody} = require('./shared/shared')
+
 const fmap = new Map([
     ['print', 'println!']
 ])
@@ -18,7 +22,11 @@ function* cond({options}) {
 
 function* fcall({name, params}) {
     const fname = fmap.get(name) || name
-    yield `${fname}("${params[0]}")`
+    if (isEmpty(params)) {
+    } else {
+        const paramString = join(params)
+        yield `${fname} "${paramString}"`
+    }
 }
 
 const rust = {

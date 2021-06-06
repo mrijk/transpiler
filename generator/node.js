@@ -4,6 +4,10 @@ const fmap = new Map([
     ['print', 'console.log']
 ])
 
+function comment(comment) {
+    return `// ${comment}`
+}
+
 function cond({options}) {
     if (options.count == 2) {
         return [
@@ -35,16 +39,11 @@ function* fdecl({name, params, body}) {
 }
 
 const node = {
-    comment: comment => `// ${comment}`,
+    language: 'Node',
 
-
-    functionDecl: ({name, params, body}) => [
-        `function ${name}() {`,
-        `}`
-    ],
-    
     decl: ({name, type, value}) => `const ${name} = ${value}`,
-    
+
+    comment,
     cond,
     fcall,
     fdecl

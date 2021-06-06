@@ -1,6 +1,14 @@
+const {isEmpty, join} = require('lodash')
+
+const {parseBody} = require('./shared/shared')
+
 const fmap = new Map([
     ['print', 'print']
 ])
+
+function comment(comment) {
+    return `# ${comment}`
+}
 
 function* main({stmts}, parseBody) {
     yield 'func main() {'
@@ -18,23 +26,30 @@ function* cond({options}) {
 
 function* fcall({name, params}) {
     const fname = fmap.get(name) || name
-    yield `${fname}("${params[0]}")`
+        if (isEmpty(params)) {
+        yield `${fname}()`
+    } else {
+        const paramString = join(params)
+        yield `${fname}("${paramString}")`
+    }
+}
+
+function* fdecl({name, params, body}) {
+    yield `func ${name}() {`
+    yield* parseBody(body, swift)
+    yield `}`
 }
 
 const swift = {
-    comment: comment => `# ${comment}`,
-
-
-    functionDecl: ({name, params, body}) => [
-        `func ${name}() {`,
-        `}`
-    ],
+    language: 'Swift',
 
     decl: ({name, type, value}) => `var ${name} = ${value}`,
 
+    comment,
     main,
     cond,
-    fcall
+    fcall,
+    fdecl
 }
 
 module.exports = {

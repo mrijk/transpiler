@@ -34,17 +34,7 @@ function parseExpr(main, generator) {
     }
 }
 
-function parseFunction(f, generator) {
-    if (generator.functionDecl) {
-        const decl = generator.functionDecl(f)
-        decl.forEach(l => out(l))
-        out(``)
-    } else {
-        out(generator.comment('Not implemented yet\n'))
-    }
-}
-
-function* parseFunction2(f, generator) {
+function* parseFunction(f, generator) {
     if (generator.fdecl) {
         yield* generator.fdecl(f)
         yield ""
@@ -55,12 +45,10 @@ function* parseFunction2(f, generator) {
 
 
 function parseFunctions(package, generator) {
-    //    functions.forEach(f => parseFunction(f, generator))
-
     const {functions} = package
     
     functions.forEach(f => {
-        for (l of parseFunction2(f, generator))
+        for (l of parseFunction(f, generator))
             out(l)
     })
 }
@@ -98,4 +86,4 @@ function generate({package}, generator) {
     parseFunctions(package, generator)
 }
 
-generate(ast, julia)
+generate(ast, C)

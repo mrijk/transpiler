@@ -1,13 +1,13 @@
+const {isEmpty, join} = require('lodash')
+
+const {parseBody} = require('./shared/shared')
+
 const fmap = new Map([
     ['print', 'println']
 ])
 
-function* main({stmts}, parseBody) {
-    yield 'def main() {'
-    yield* parseBody(stmts)
-    yield '}'
-    yield ''
-    yield 'main()'
+function comment(comment) {
+    return `// ${comment}`
 }
 
 function* cond({options}) {
@@ -20,23 +20,33 @@ function* cond({options}) {
 
 function* fcall({name, params}) {
     const fname = fmap.get(name) || name
-    yield `${fname} "${params[0]}"`
+    if (isEmpty(params)) {
+        yield `${fname}`
+    } else {
+        const paramString = join(params)
+        yield `${fname} "${paramString}"`
+    }
+}
+
+function* fdecl({name, params, body}) {
+    yield `def ${name}() {`
+    yield* parseBody(body, groovy)
+    yield '}'
+    if (name === 'main') {
+        yield ''
+        yield 'main()'
+    }
 }
 
 const groovy = {
-    comment: comment => `# ${comment}`,
-
-
-    functionDecl: ({name, params, body}) => [
-        `def ${name}() {`,
-        `}`
-    ],
+    language: 'Groovy',
     
     decl: ({name, type, value}) => `def ${name} = ${value}`,
 
-    main,
+    comment,
     cond,
-    fcall
+    fcall,
+    fdecl
 }
 
 module.exports = {

@@ -1,8 +1,16 @@
 // node index.js | gcc -x c -
 
+const {isEmpty, join} = require('lodash')
+
+const {parseBody} = require('./shared/shared')
+
 const fmap = new Map([
     ['print', 'printf']
 ])
+
+function comment(comment) {
+    return `/* ${comment} */`
+}
 
 function* main({stmts}, parseBody) {
     yield '#include <stdio.h>'
@@ -23,23 +31,33 @@ function* cond({options}) {
 
 function* fcall({name, params}) {
     const fname = fmap.get(name) || name
-    yield `${fname}("${params[0]}");`
+    if (isEmpty(params)) {
+        yield `${fname}();`
+    } else {
+        const paramString = join(params)
+        yield `${fname}("${paramString}");`
+    }
+}
+
+function* fdecl({name, params, returns, body}) {
+    yield `${returns} ${name}() {`
+    yield* parseBody(body, C)
+    if (name === 'main') {
+        yield '  return 0;'
+    }
+    yield '}'
 }
 
 const C = {
-    comment: comment => `/* ${comment} */`,
-
-
-    functionDecl: ({name, params, body}) => [
-        `void ${name}() {`,
-        `}`
-    ],
+    language: 'C',
 
     decl: ({name, type, value}) => `var ${name} = ${value}`,
 
+    comment,
     main,
     cond,
-    fcall
+    fcall,
+    fdecl
 }
 
 module.exports = {

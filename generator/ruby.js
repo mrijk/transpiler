@@ -1,10 +1,14 @@
-const _ = require('lodash')
+const {isEmpty, join} = require('lodash')
 
 const {parseBody} = require('./shared/shared')
 
 const fmap = new Map([
     ['print', 'puts']
 ])
+
+function comment(comment) {
+    return `# ${comment}`
+}
 
 function* cond({options}) {
     yield `if ${options[0].predicate}`
@@ -16,10 +20,10 @@ function* cond({options}) {
 
 function* fcall({name, params}) {
     const fname = fmap.get(name) || name
-    if (_.isEmpty(params)) {
+    if (isEmpty(params)) {
         yield `${fname}`
     } else {
-        const paramString = _.join(params)
+        const paramString = join(params)
         yield `${fname} "${paramString}"`
     }
 }
@@ -35,10 +39,11 @@ function* fdecl({name, params, body}) {
 }
 
 const ruby = {
-    comment: comment => `# ${comment}`,
-
+    language: 'Ruby',
+    
     decl: ({name, type, value}) => `${name} = ${value}`,
 
+    comment,
     cond,
     fcall,
     fdecl
