@@ -1,8 +1,17 @@
 const ast = {
     functions: [
-        {name: "functionOne",
-         params: [],
-         body: []
+        {
+            name: "functionOne",
+            params: [],
+            body: [
+                {
+                    type: "fcall",
+                    name: "print",
+                    params: [
+                        "Hello from functionOne!"
+                    ]
+                }
+            ]
         }
     ],
     

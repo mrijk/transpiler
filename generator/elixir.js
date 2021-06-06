@@ -1,10 +1,16 @@
 const _ = require('lodash')
 
-const {parseBody} = require('./shared/shared')
-
 const fmap = new Map([
-    ['print', 'puts']
+    ['print', 'IO.puts']
 ])
+
+function* main({stmts}, parseBody) {
+    yield 'defmodule ExampleApp.CLI do'
+    yield '  def main(args \\\\ []) do'
+    yield* parseBody(stmts)
+    yield '  end'
+    yield 'end'
+}
 
 function* cond({options}) {
     yield `if ${options[0].predicate}`
@@ -25,25 +31,21 @@ function* fcall({name, params}) {
 }
 
 function* fdecl({name, params, body}) {
-    yield `def ${name}()`
-    yield* parseBody(body, ruby)
-    yield `end`
-    if (name === 'main') {
-        yield ''
-        yield 'main'
-    }
+//    yield `defp ${name}()`
+//    yield `end`    
 }
 
-const ruby = {
+const elixir = {
     comment: comment => `# ${comment}`,
 
     decl: ({name, type, value}) => `${name} = ${value}`,
 
+    main,
     cond,
     fcall,
     fdecl
 }
 
 module.exports = {
-    ruby
+    elixir
 }

@@ -1,6 +1,7 @@
 const _ = require('lodash')
 
 const {C} = require('./generator/c')
+const {elixir} = require('./generator/elixir')
 const {go} = require('./generator/go')
 const {julia} = require('./generator/julia')
 const {groovy} = require('./generator/groovy')
@@ -12,7 +13,7 @@ const {ruby} = require('./generator/ruby')
 const {rust} = require('./generator/rust')
 const {swift} = require('./generator/swift')
 
-const {ast} = require('./asts/ast3')
+const {ast} = require('./asts/ast4')
 
 
 function out(s, indent = 0) {
@@ -53,9 +54,11 @@ function* parseFunction2(f, generator) {
 }
 
 
-function parseFunctions({functions}, generator) {
+function parseFunctions(package, generator) {
     //    functions.forEach(f => parseFunction(f, generator))
 
+    const {functions} = package
+    
     functions.forEach(f => {
         for (l of parseFunction2(f, generator))
             out(l)
@@ -84,9 +87,15 @@ function parseMain(ast, generator) {
     }
 }
 
-function generate(ast, generator) {
-    parseFunctions(ast, generator)
-    parseMain(ast, generator)
+function header({comment, language}) {
+    const now = new Date().toISOString()
+    out(comment(`Generated for language ${language} on ${now}`))
+    out('')
 }
 
-generate(ast, ruby)
+function generate({package}, generator) {
+    header(generator)
+    parseFunctions(package, generator)
+}
+
+generate(ast, julia)

@@ -1,13 +1,13 @@
+const {isEmpty, join} = require('lodash')
+
+const {parseBody} = require('./shared/shared')
+
 const fmap = new Map([
     ['print', 'println']
 ])
 
-function* main({stmts}, parseBody) {
-    yield "function main()"
-    yield* parseBody(stmts)
-    yield "end"
-    yield ''
-    yield 'main()'
+function comment(comment) {
+    return `# ${comment}`
 }
 
 function* cond({options}) {
@@ -27,22 +27,33 @@ function* cond({options}) {
 
 function* fcall({name, params}) {
     const fname = fmap.get(name) || name
-    yield `${fname}("${params[0]}")`
+    if (isEmpty(params)) {
+        yield `${fname}()`
+    } else {
+        const paramString = join(params)
+        yield `${fname}("${paramString}")`
+    }
+}
+
+function* fdecl({name, params, body}) {
+    yield `function ${name}()`
+    yield* parseBody(body, julia)
+    yield 'end'
+    if (name === 'main') {
+        yield ''
+        yield 'main()'
+    }
 }
 
 const julia = {
-    comment: comment => `# ${comment}`,
-    
-    functionDecl: ({name, params, body}) => [
-        `function ${name}()`,
-        `end`
-    ],
+    language: 'Julia',
     
     decl: ({name, type, value}) => `${name} = ${value}`,
 
-    main,
+    comment,    
     cond,
-    fcall
+    fcall,
+    fdecl
 }
 
 module.exports = {

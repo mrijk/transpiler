@@ -1,14 +1,8 @@
+const {parseBody} = require('./shared/shared')
+
 const fmap = new Map([
     ['print', 'console.log']
 ])
-
-function* main({stmts}, parseBody) {
-    yield 'function main() {'
-    yield* parseBody(stmts)
-    yield '}'
-    yield ''
-    yield 'main()'
-}
 
 function cond({options}) {
     if (options.count == 2) {
@@ -26,7 +20,18 @@ function cond({options}) {
 
 function* fcall({name, params}) {
     const fname = fmap.get(name) || name
-    yield `${fname}("${params[0]}")`
+    const paramString = _.join(params)
+    yield `${fname}("${paramString}")`
+}
+
+function* fdecl({name, params, body}) {
+    yield `function ${name}() {`
+    yield* parseBody(body, node)
+    yield `}`
+    if (name === 'main') {
+        yield ''
+        yield 'main()'
+    }
 }
 
 const node = {
@@ -40,9 +45,9 @@ const node = {
     
     decl: ({name, type, value}) => `const ${name} = ${value}`,
     
-    main,
     cond,
-    fcall
+    fcall,
+    fdecl
 }
 
 module.exports = {
