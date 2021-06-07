@@ -64,4 +64,4 @@ function generate({package}, generator) {
     parseFunctions(package, generator)
 }
 
-generate(ast, lua)
+generate(ast, go)
