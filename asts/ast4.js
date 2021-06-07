@@ -10,7 +10,25 @@ const ast = {
                 body: {
                     stmts: [
                         {
-                            type: "fcall",
+                            t: "decl",
+                            name: "x",
+                            type: "int",
+                            value: "5"
+                        },
+                        {
+                            t: "cond",
+                            options: [
+                                {
+                                    predicate: "x < 5",
+                                    expr: "0"
+                                },
+                                {
+                                    expr: "1"
+                                }
+                            ]
+                        },
+                        {
+                            t: "fcall",
                             name: "print",
                             params: [
                                 "Hello from functionOne!"
@@ -26,12 +44,12 @@ const ast = {
                 body: {
                     stmts: [
                         {
-                            type: "fcall",
+                            t: "fcall",
                             name: "functionOne",
                             params: []
                         },
                         {
-                            type: "fcall",
+                            t: "fcall",
                             name: "print",
                             params: [
                                 "Hello world!"

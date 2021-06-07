@@ -1,3 +1,5 @@
+// node index.js | ruby
+
 const {isEmpty, join} = require('lodash')
 
 const {parseBody} = require('./shared/shared')
@@ -38,13 +40,17 @@ function* fdecl({name, params, body}) {
     }
 }
 
+function* decl({name, type, value}) {
+    yield `${name} = ${value}`
+}
+
 const ruby = {
     language: 'Ruby',
-    
-    decl: ({name, type, value}) => `${name} = ${value}`,
+    extension: 'rb',
 
     comment,
     cond,
+    decl,
     fcall,
     fdecl
 }

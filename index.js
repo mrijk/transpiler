@@ -44,7 +44,6 @@ function* parseFunction(f, generator) {
     }
 }
 
-
 function parseFunctions(package, generator) {
     const {functions} = package
     
@@ -52,28 +51,6 @@ function parseFunctions(package, generator) {
         for (l of parseFunction(f, generator))
             out(l)
     })
-}
-
-function* parseStmt(stmt, generator) {
-    if (stmt.type === 'fcall') {
-        yield* generator.fcall(stmt)
-    }
-}
-
-function* parseBody(stmts, generator) {
-    yield* stmts.map(stmt => Array.from(parseStmt(stmt, generator)))
-}
-
-function parseMain(ast, generator) {
-    if (ast.main != null) {
-        for (l of generator.main(ast.main, _.partialRight(parseBody, generator)))
-            out(l)
-        
-        /*
-        parseBody(ast.main, generator)
-        parseExpr(ast.main, generator)
-        */
-    }
 }
 
 function header({comment, language}) {
