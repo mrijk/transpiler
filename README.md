@@ -5,10 +5,12 @@ Just an experimental project to see what you run into when generating several la
 ## Supported languages
 
 - C
+- Elixir
 - GoLang
 - Groovy
 - Julia
 - Kotlin
+- Lua
 - Node
 - Perl (really????)
 - Python
@@ -23,7 +25,6 @@ List of languages that we may generate
 - C++
 - Java
 - C#
-- Elixir
 - Clojure
 - 
 ## Challenges

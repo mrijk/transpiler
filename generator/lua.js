@@ -1,15 +1,13 @@
-// node index.js | gcc -x c -
-
 const {isEmpty, join} = require('lodash')
 
 const {parseBody} = require('./shared/shared')
 
 const fmap = new Map([
-    ['print', 'printf']
+    ['print', 'print']
 ])
 
 function comment(comment) {
-    return `/* ${comment} */`
+    return `-- ${comment}`
 }
 
 function* cond({options}) {
@@ -26,21 +24,22 @@ function* fcall({name, params}) {
         yield `${fname}();`
     } else {
         const paramString = join(params)
-        yield `${fname}("${paramString}");`
+        yield `${fname}("${paramString}")`
     }
 }
 
 function* fdecl({name, params, returns, body}) {
-    yield `${returns} ${name}() {`
-    yield* parseBody(body, C)
+    yield `function ${name} ()`
+    yield* parseBody(body, lua)
+    yield 'end'
     if (name === 'main') {
-        yield '  return 0;'
+        yield ''
+        yield 'main()'
     }
-    yield '}'
 }
 
-const C = {
-    language: 'C',
+const lua = {
+    language: 'Lua',
 
     decl: ({name, type, value}) => `var ${name} = ${value}`,
 
@@ -51,5 +50,5 @@ const C = {
 }
 
 module.exports = {
-    C
+    lua
 }

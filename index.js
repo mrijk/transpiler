@@ -6,6 +6,7 @@ const {go} = require('./generator/go')
 const {julia} = require('./generator/julia')
 const {groovy} = require('./generator/groovy')
 const {kotlin} = require('./generator/kotlin')
+const {lua} = require('./generator/lua')
 const {node} = require('./generator/node')
 const {perl} = require('./generator/perl')
 const {python} = require('./generator/python')
@@ -86,4 +87,4 @@ function generate({package}, generator) {
     parseFunctions(package, generator)
 }
 
-generate(ast, kotlin)
+generate(ast, lua)
