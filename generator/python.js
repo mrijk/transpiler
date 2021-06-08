@@ -1,6 +1,14 @@
+const {isEmpty, join} = require('lodash')
+
+const {indent, parseBody} = require('./shared/shared')
+
 const fmap = new Map([
     ['print', 'print']
 ])
+
+function comment(comment) {
+    return `# ${comment}`
+}
 
 function* cond({options}) {
     yield `if ${options[0].predicate}:`
@@ -9,31 +17,39 @@ function* cond({options}) {
     yield `  ${options[1].expr}`
 }
 
-function* main({stmts}, parseBody) {
-    yield `def main():`
-    yield* parseBody(stmts)
-    yield 'if __name__ == "__main__"'
-    yield '  main()'
-}
-
 function* fcall({name, params}) {
     const fname = fmap.get(name) || name
-    yield `${fname}("${params[0]}")`
+    if (isEmpty(params)) {
+        yield `${fname}()`
+    } else {
+        const paramString = join(params)
+        yield `${fname}("${paramString}")`
+    }
+}
+
+function* fdecl({name, params, body}) {
+    yield `def ${name}():`
+    yield* parseBody(body, python)
+    if (name === 'main') {
+        yield ''
+        yield 'if __name__ == "__main__":'
+        yield '  main()'
+    }
+}
+
+function* decl({name, type, value}) {
+    yield `${name} = ${value}`
 }
 
 const python = {
-    comment: comment => `# ${comment}`,
-
-    functionDecl: ({name, params, body}) => [
-        `def ${name}():`,
-        `  pass`
-    ],
-
-    decl: ({name, type, value}) => `${name} = ${value}`,
-
-    main,
+    language: 'Python',
+    extension: 'py',
+    
+    comment,
     cond,
-    fcall
+    decl,
+    fcall,
+    fdecl
 }
 
 module.exports = {

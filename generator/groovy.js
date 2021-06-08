@@ -38,13 +38,16 @@ function* fdecl({name, params, body}) {
     }
 }
 
+function* decl({name, type, value}, level) {
+    yield indent(level, `def ${name} = ${value}`)
+}
+
 const groovy = {
     language: 'Groovy',
     
-    decl: ({name, type, value}) => `def ${name} = ${value}`,
-
     comment,
     cond,
+    decl,
     fcall,
     fdecl
 }
