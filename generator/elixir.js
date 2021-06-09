@@ -1,19 +1,23 @@
-const _ = require('lodash')
+const {isEmpty, join} = require('lodash')
+
+const {indent, parseBody, parseFunctions} = require('./shared/shared')
 
 const fmap = new Map([
     ['print', 'IO.puts']
 ])
 
-function* main({stmts}, parseBody) {
+function comment(comment) {
+    return `# ${comment}`
+}
+
+function* package({functions}) {
     yield 'defmodule ExampleApp.CLI do'
-    yield '  def main(args \\\\ []) do'
-    yield* parseBody(stmts)
-    yield '  end'
+    yield* parseFunctions(functions, elixir, 1)
     yield 'end'
 }
 
 function* cond({options}) {
-    yield `if ${options[0].predicate}`
+    yield `if ${options[0].predicate} do`
     yield `  ${options[0].expr}`
     yield `else`
     yield `  ${options[1].expr}`
@@ -22,28 +26,34 @@ function* cond({options}) {
 
 function* fcall({name, params}) {
     const fname = fmap.get(name) || name
-    if (_.isEmpty(params)) {
-        yield `${fname}`
+    if (isEmpty(params)) {
+        yield `${fname}()`
     } else {
-        const paramString = _.join(params)
-        yield `${fname} "${paramString}"`
+        const paramString = join(params)
+        yield `${fname}("${paramString}")`
     }
 }
 
 function* fdecl({name, params, body}) {
-//    yield `defp ${name}()`
-//    yield `end`    
+    yield `defp ${name}() do`
+    yield* parseBody(body, elixir)
+    yield `end`    
+}
+
+function* decl({name, type, value}) {
+    yield `${name} = ${value}`
 }
 
 const elixir = {
-    comment: comment => `# ${comment}`,
-
-    decl: ({name, type, value}) => `${name} = ${value}`,
-
-    main,
+    language: 'Elixir',
+    extension: 'ex',
+    
+    comment,
     cond,
+    decl,
     fcall,
-    fdecl
+    fdecl,
+    package
 }
 
 module.exports = {

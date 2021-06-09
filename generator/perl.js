@@ -11,35 +11,44 @@ function comment(comment) {
 }
 
 function* cond({options}) {
-    yield `if ${options[0].predicate} {`
-    yield `  ${options[0].expr}`
+    yield `if (${options[0].predicate}) {`
+    yield `  ${options[0].expr};`
     yield `} else {`
-    yield `  ${options[1].expr}`
+    yield `  ${options[1].expr};`
     yield '}'
 }
 
 function* fcall({name, params}) {
     const fname = fmap.get(name) || name
-    yield `${fname} "${params[0]}";`
+    if (isEmpty(params)) {
+        yield `${fname}();`
+    } else {
+        const paramString = join(params)
+        yield `${fname}("${paramString}");`
+    }
 }
 
 function* fdecl({name, params, body}) {
-    yield 'sub Main() {'
+    yield `sub ${name}() {`
     yield* parseBody(body, perl)
     yield '}'
     if (name === 'main') {
         yield ''
-        yield 'Main()'
+        yield 'main()'
     }
+}
+
+function* decl({name, type, value}) {
+    yield `$${name} = ${value};`
 }
 
 const perl = {
     language: 'Perl',
-    
-    decl: ({name, type, value}) => `var ${name} = ${value}`,
+    extension: 'pl',
 
     comment,
     cond,
+    decl,
     fcall,
     fdecl
 }

@@ -1,13 +1,19 @@
 const {isEmpty, join} = require('lodash')
 
-const {parseBody} = require('./shared/shared')
+const {parseBody, parseFunctions} = require('./shared/shared')
 
 const fmap = new Map([
     ['print', 'println']
 ])
 
 function comment(comment) {
-    return `# ${comment}`
+    return `// ${comment}`
+}
+
+function* package({functions}) {
+    yield 'package main'
+    yield ''
+    yield* parseFunctions(functions, go)
 }
 
 function* cond({options}) {
@@ -20,8 +26,14 @@ function* cond({options}) {
 
 function* fcall({name, params}) {
     const fname = fmap.get(name) || name
-    yield `${fname}("${params[0]}")`
+    if (isEmpty(params)) {
+        yield `${fname}()`
+    } else {
+        const paramString = join(params)
+        yield `${fname}("${paramString}")`
+    }
 }
+
 function* fdecl({name, params, body}) {
     yield `func ${name}() {`
     yield* parseBody(body, go)
@@ -40,7 +52,8 @@ const go = {
     cond,
     decl,
     fcall,
-    fdecl
+    fdecl,
+    package
 }
 
 module.exports = {

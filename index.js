@@ -59,9 +59,15 @@ function header({comment, language}) {
     out('')
 }
 
-function generate({package}, generator) {
-    header(generator)
-    parseFunctions(package, generator)
+function parseMain(package, generator) {
+    for (l of generator.package(package, generator))
+        out(l)
 }
 
-generate(ast, node)
+function generate({package}, generator) {
+    header(generator)
+    parseMain(package, generator)
+//    parseFunctions(package, generator)
+}
+
+generate(ast, go)
