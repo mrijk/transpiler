@@ -20,10 +20,10 @@ const ast = {
                             options: [
                                 {
                                     predicate: "x < 5",
-                                    expr: "0"
+                                    expr: "y = 0"
                                 },
                                 {
-                                    expr: "1"
+                                    expr: "y = 1"
                                 }
                             ]
                         },
