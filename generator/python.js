@@ -10,11 +10,41 @@ function comment(comment) {
     return `# ${comment}`
 }
 
-function* cond({options}) {
+function* cond1(options) {
+    yield `if ${options[0].predicate}:`
+    yield `  ${options[0].expr}`
+}
+
+function* cond2(options) {
     yield `if ${options[0].predicate}:`
     yield `  ${options[0].expr}`
     yield `else:`
     yield `  ${options[1].expr}`
+}
+
+function* condn(options) {
+    const n = options.length
+    yield `if ${options[0].predicate}:`
+    yield `  ${options[0].expr}`
+    for (i = 1; i < n -1; i++) {
+        yield `elif ${options[i].predicate}:`
+        yield `  ${options[i].expr}`
+    }
+    yield `else:`
+    yield `  ${options[n - 1].expr}`    
+}
+
+function* cond({options}) {
+    switch (options.length) {
+    case 1:
+        yield* cond1(options)
+        break
+    case 2:
+        yield* cond2(options)
+        break
+    default:
+        yield* condn(options)
+    }
 }
 
 function* fcall({name, params}) {

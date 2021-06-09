@@ -14,7 +14,7 @@ const {ruby} = require('./generator/ruby')
 const {rust} = require('./generator/rust')
 const {swift} = require('./generator/swift')
 
-const {ast} = require('./asts/ast4')
+const {ast} = require('./asts/ast5')
 
 
 function out(s, indent = 0) {

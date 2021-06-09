@@ -1,4 +1,4 @@
-// ast2: simple if/then
+// ast3: simple if/then/elseif/else
 
 const ast = {
     package: {
@@ -23,6 +23,13 @@ const ast = {
                                 {
                                     predicate: "x < 5",
                                     expr: "0"
+                                },
+                                {
+                                    predicate: "x < 7",
+                                    expr: "1"
+                                },
+                                {
+                                    expr: "2"
                                 }
                             ]
                         }
