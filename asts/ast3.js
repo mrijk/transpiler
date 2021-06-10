@@ -22,10 +22,30 @@ const ast = {
                             options: [
                                 {
                                     predicate: "x < 5",
-                                    expr: "0"
+                                    body: {
+                                        stmts: [
+                                            {
+                                                t: "fcall",
+                                                name: "print",
+                                                params: [
+                                                    "x less than 5!"
+                                                ]
+                                            }
+                                        ]
+                                    }
                                 },
                                 {
-                                    expr: "1"
+                                    body: {
+                                        stmts: [
+                                            {
+                                                t: "fcall",
+                                                name: "print",
+                                                params: [
+                                                    "x larger or equal to 5!"
+                                                ]                        
+                                            }
+                                        ]
+                                    }
                                 }
                             ]
                         }

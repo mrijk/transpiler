@@ -21,8 +21,18 @@ const ast = {
                             t: "cond",
                             options: [
                                 {
-                                    predicate: "x < 5",
-                                    expr: "0"
+                                    predicate: "x < 6",
+                                    body: {
+                                        stmts: [
+                                            {
+                                                t: "fcall",
+                                                name: "print",
+                                                params: [
+                                                    "x less than 5!"
+                                                ]                                                
+                                            }
+                                        ]
+                                    }
                                 }
                             ]
                         }

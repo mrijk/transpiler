@@ -16,12 +16,33 @@ function* package({functions}) {
     yield* parseFunctions(functions, go)
 }
 
-function* cond({options}) {
-    yield `if ${options[0].predicate} {`
-    yield `  ${options[0].expr}`
-    yield `} else {`
-    yield `  ${options[1].expr}`
+function* cond1(options) {
+    yield `if (${options[0].predicate}) {`
+    yield* parseBody(options[0].body, go)
     yield `}`
+}
+
+function* condn(options) {
+    const n = options.length - 1
+    yield `if (${options[0].predicate}) {`
+    yield* parseBody(options[0].body, go)
+    for (i = 1; i < n; i++) {
+        yield `else if (${options[i].predicate}) {`
+        yield* parseBody(options[i].body, go)
+    }
+    yield `} else {`
+    yield* parseBody(options[n].body, go)
+    yield `}`
+}
+
+function* cond({options}) {
+    switch (options.length) {
+    case 1:
+        yield* cond1(options)
+        break
+    default:
+        yield* condn(options)
+    }
 }
 
 function* fcall({name, params}) {
