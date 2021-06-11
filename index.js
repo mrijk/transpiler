@@ -23,36 +23,6 @@ function out(s, indent = 0) {
     }
 }
 
-function parseExpr(main, generator) {
-    if (main.decl != null) {
-        const decl = generator.decl(main.decl)
-        out(decl, 1)
-    }
-
-    if (main.cond != null) {
-        for (c of generator.cond(main.cond))
-            out(c, 1)
-    }
-}
-
-function* parseFunction(f, generator) {
-    if (generator.fdecl) {
-        yield* generator.fdecl(f)
-        yield ""
-    } else {
-        yield generator.comment('fdecl not implemented yet!')
-    }
-}
-
-function parseFunctions(package, generator) {
-    const {functions} = package
-    
-    functions.forEach(f => {
-        for (l of parseFunction(f, generator))
-            out(l)
-    })
-}
-
 function header({comment, language}) {
     const now = new Date().toISOString()
     out(comment(`Generated for language ${language} on ${now}`))
@@ -69,4 +39,4 @@ function generate({package}, generator) {
     parseMain(package, generator)
 }
 
-generate(ast, julia)
+generate(ast, groovy)

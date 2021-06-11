@@ -2,7 +2,19 @@
 
 const {isEmpty, join} = require('lodash')
 
-const {indent, parseBody} = require('./shared/shared')
+const python = {
+    language: 'Python',
+    extension: 'py',
+    
+    comment,
+    cond,
+    decl,
+    fcall,
+    fdecl,
+    package
+}
+
+const {parseBody, parseFunctions} = require('./shared/shared')(python)
 
 const fmap = new Map([
     ['print', 'print']
@@ -12,37 +24,31 @@ function comment(comment) {
     return `# ${comment}`
 }
 
-function* cond1(options) {
-    yield `if ${options[0].predicate}:`
-    yield `  ${options[0].expr}`
+function* package({functions}) {
+    yield* parseFunctions(functions)
 }
 
-function* cond2(options) {
+function* cond1(options) {
     yield `if ${options[0].predicate}:`
-    yield `  ${options[0].expr}`
-    yield `else:`
-    yield `  ${options[1].expr}`
+    yield* parseBody(options[0].body)
 }
 
 function* condn(options) {
-    const n = options.length
+    const n = options.length - 1
     yield `if ${options[0].predicate}:`
-    yield `  ${options[0].expr}`
-    for (i = 1; i < n -1; i++) {
+    yield* parseBody(options[0].body)
+    for (i = 1; i < n; i++) {
         yield `elif ${options[i].predicate}:`
-        yield `  ${options[i].expr}`
+        yield* parseBody(options[i].body)
     }
     yield `else:`
-    yield `  ${options[n - 1].expr}`    
+    yield* parseBody(options[n].body)
 }
 
 function* cond({options}) {
     switch (options.length) {
     case 1:
         yield* cond1(options)
-        break
-    case 2:
-        yield* cond2(options)
         break
     default:
         yield* condn(options)
@@ -61,7 +67,7 @@ function* fcall({name, params}) {
 
 function* fdecl({name, params, body}) {
     yield `def ${name}():`
-    yield* parseBody(body, python)
+    yield* parseBody(body)
     if (name === 'main') {
         yield ''
         yield 'if __name__ == "__main__":'
@@ -71,17 +77,6 @@ function* fdecl({name, params, body}) {
 
 function* decl({name, type, value}) {
     yield `${name} = ${value}`
-}
-
-const python = {
-    language: 'Python',
-    extension: 'py',
-    
-    comment,
-    cond,
-    decl,
-    fcall,
-    fdecl
 }
 
 module.exports = {

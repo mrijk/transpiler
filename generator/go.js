@@ -1,6 +1,18 @@
 const {isEmpty, join} = require('lodash')
 
-const {parseBody, parseFunctions} = require('./shared/shared')
+const go = {
+    language: 'Go',
+    extension: 'go',
+
+    comment,
+    cond,
+    decl,
+    fcall,
+    fdecl,
+    package
+}
+
+const {parseBody, parseFunctions} = require('./shared/shared')(go)
 
 const fmap = new Map([
     ['print', 'println']
@@ -13,25 +25,25 @@ function comment(comment) {
 function* package({functions}) {
     yield 'package main'
     yield ''
-    yield* parseFunctions(functions, go)
+    yield* parseFunctions(functions)
 }
 
 function* cond1(options) {
     yield `if (${options[0].predicate}) {`
-    yield* parseBody(options[0].body, go)
+    yield* parseBody(options[0].body)
     yield `}`
 }
 
 function* condn(options) {
     const n = options.length - 1
     yield `if (${options[0].predicate}) {`
-    yield* parseBody(options[0].body, go)
+    yield* parseBody(options[0].body)
     for (i = 1; i < n; i++) {
         yield `else if (${options[i].predicate}) {`
-        yield* parseBody(options[i].body, go)
+        yield* parseBody(options[i].body)
     }
     yield `} else {`
-    yield* parseBody(options[n].body, go)
+    yield* parseBody(options[n].body)
     yield `}`
 }
 
@@ -57,24 +69,12 @@ function* fcall({name, params}) {
 
 function* fdecl({name, params, body}) {
     yield `func ${name}() {`
-    yield* parseBody(body, go)
+    yield* parseBody(body)
     yield '}'
 }
 
 function* decl({name, type, value}) {
     yield `var ${name} ${type} = ${value}`
-}
-
-const go = {
-    language: 'Go',
-    extension: 'go',
-
-    comment,
-    cond,
-    decl,
-    fcall,
-    fdecl,
-    package
 }
 
 module.exports = {

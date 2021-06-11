@@ -1,6 +1,20 @@
+//
+
 const {isEmpty, join} = require('lodash')
 
-const {parseBody} = require('./shared/shared')
+const groovy = {
+    language: 'Groovy',
+    extension: '',
+    
+    comment,
+    cond,
+    decl,
+    fcall,
+    fdecl,
+    package
+}
+
+const {parseBody, parseFunctions} = require('./shared/shared')(groovy)
 
 const fmap = new Map([
     ['print', 'println']
@@ -10,12 +24,33 @@ function comment(comment) {
     return `// ${comment}`
 }
 
-function* cond({options}) {
+function* package({functions}) {
+    yield* parseFunctions(functions)
+}
+
+function* condn(options) {
+    const n = options.length - 1
     yield `if (${options[0].predicate}) {`
-    yield `  ${options[0].expr}`
-    yield `} else {`
-    yield `  ${options[1].expr}`
+    yield* parseBody(options[0].body)
+    yield '}'
+    for (i = 1; i < n; i++) {
+        yield `else if (${options[i].predicate}) {`
+        yield* parseBody(options[i].body)
+        yield '}'
+    }
+    yield `else {`
+    yield* parseBody(options[n].body)
     yield `}`
+}
+
+function* cond({options}) {
+    switch (options.length) {
+    case 1:
+        yield* cond1(options)
+        break
+    default:
+        yield* condn(options)
+    }
 }
 
 function* fcall({name, params}) {
@@ -30,7 +65,7 @@ function* fcall({name, params}) {
 
 function* fdecl({name, params, body}) {
     yield `def ${name}() {`
-    yield* parseBody(body, groovy)
+    yield* parseBody(body)
     yield '}'
     if (name === 'main') {
         yield ''
@@ -39,17 +74,7 @@ function* fdecl({name, params, body}) {
 }
 
 function* decl({name, type, value}, level) {
-    yield indent(level, `def ${name} = ${value}`)
-}
-
-const groovy = {
-    language: 'Groovy',
-    
-    comment,
-    cond,
-    decl,
-    fcall,
-    fdecl
+    yield `def ${name} = ${value}`
 }
 
 module.exports = {

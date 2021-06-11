@@ -1,8 +1,20 @@
 // node index.js | ruby
 
-const {isEmpty, join, partialRight} = require('lodash')
+const {isEmpty, join} = require('lodash')
 
-const {parseBody, parseFunctions} = require('./shared/shared')
+const ruby = {
+    language: 'Ruby',
+    extension: 'rb',
+
+    comment,
+    cond,
+    decl,
+    fcall,
+    fdecl,
+    package
+}
+
+const {parseBody, parseFunctions} = require('./shared/shared')(ruby)
 
 const fmap = new Map([
     ['print', 'puts']
@@ -13,25 +25,25 @@ function comment(comment) {
 }
 
 function* package({functions}) {
-    yield* parseFunctions(functions, ruby)
+    yield* parseFunctions(functions)
 }
 
 function* cond1(options) {
     yield `if ${options[0].predicate} {`
-    yield* parseBody(options[0].body, ruby)
+    yield* parseBody(options[0].body)
     yield `}`
 }
 
 function* condn(options) {
     const n = options.length - 1
     yield `if ${options[0].predicate}`
-    yield* parseBody(options[0].body, ruby)
+    yield* parseBody(options[0].body)
     for (i = 1; i < n; i++) {
         yield `elseif ${options[i].predicate}`
-        yield* parseBody(options[i].body, ruby)
+        yield* parseBody(options[i].body)
     }
     yield `else`
-    yield* parseBody(options[n].body, ruby)
+    yield* parseBody(options[n].body)
     yield `end`
 }
 
@@ -57,7 +69,7 @@ function* fcall({name, params}) {
 
 function* fdecl({name, params, body}) {
     yield `def ${name}()`
-    yield* parseBody(body, ruby)
+    yield* parseBody(body)
     yield `end`
     if (name === 'main') {
         yield ''
@@ -67,18 +79,6 @@ function* fdecl({name, params, body}) {
 
 function* decl({name, type, value}) {
     yield `${name} = ${value}`
-}
-
-const ruby = {
-    language: 'Ruby',
-    extension: 'rb',
-
-    comment,
-    cond,
-    decl,
-    fcall,
-    fdecl,
-    package
 }
 
 module.exports = {

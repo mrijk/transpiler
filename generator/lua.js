@@ -2,7 +2,19 @@
 
 const {isEmpty, join} = require('lodash')
 
-const {parseBody} = require('./shared/shared')
+const lua = {
+    language: 'Lua',
+    extension: 'lua',
+
+    comment,
+    cond,
+    decl,
+    fcall,
+    fdecl,
+    package
+}
+
+const {parseBody, parseFunctions} = require('./shared/shared')(lua)
 
 const fmap = new Map([
     ['print', 'print']
@@ -12,24 +24,28 @@ function comment(comment) {
     return `-- ${comment}`
 }
 
+function* package({functions}) {
+    yield* parseFunctions(functions)
+}
+
 function* cond1(options) {
     yield `if ${options[0].predicate} then`
-    yield `  ${options[0].expr}`
+    yield* parseBody(options[0].body)
     yield 'end'
 }
 
 function* condn(options) {
-    const n = options.length
+    const n = options.length - 1
     yield `if ${options[0].predicate} then`
-    yield `  ${options[0].expr}`
-    for (i = 1; i < n -1; i++) {
+    yield* parseBody(options[0].body)
+    for (i = 1; i < n; i++) {
         yield `elseif ${options[i].predicate} then`
-        yield `  ${options[i].expr}`
-        if (i != n - 2)
+        yield* parseBody(options[i].body)
+        if (i != n - 1)
             yield 'end'
     }
     yield `else`
-    yield `  ${options[n - 1].expr}`
+    yield* parseBody(options[n].body)
     yield 'end'
 }
 
@@ -55,7 +71,7 @@ function* fcall({name, params}) {
 
 function* fdecl({name, params, returns, body}) {
     yield `function ${name} ()`
-    yield* parseBody(body, lua)
+    yield* parseBody(body)
     yield 'end'
     if (name === 'main') {
         yield ''
@@ -65,17 +81,6 @@ function* fdecl({name, params, returns, body}) {
 
 function* decl({name, type, value}) {
     yield `${name} = ${value}`
-}
-
-const lua = {
-    language: 'Lua',
-    extension: 'lua',
-
-    comment,
-    cond,
-    decl,
-    fcall,
-    fdecl
 }
 
 module.exports = {
