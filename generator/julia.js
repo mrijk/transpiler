@@ -2,7 +2,19 @@
 
 const {isEmpty, join} = require('lodash')
 
-const {parseBody, parseFunctions} = require('./shared/shared')
+const julia = {
+    language: 'Julia',
+    extension: 'jl',
+    
+    comment,    
+    cond,
+    decl,
+    fcall,
+    fdecl,
+    package
+}
+
+const {parseBody, parseFunctions} = require('./shared/shared')(julia)
 
 const fmap = new Map([
     ['print', 'println']
@@ -13,25 +25,25 @@ function comment(comment) {
 }
 
 function* package({functions}) {
-    yield* parseFunctions(functions, julia)
+    yield* parseFunctions(functions)
 }
 
 function* cond1(options) {
     yield `if ${options[0].predicate} {`
-    yield* parseBody(options[0].body, julia)
+    yield* parseBody(options[0].body,)
     yield `}`
 }
 
 function* condn(options) {
     const n = options.length - 1
     yield `if ${options[0].predicate}`
-    yield* parseBody(options[0].body, julia)
+    yield* parseBody(options[0].body)
     for (i = 1; i < n; i++) {
         yield `elseif ${options[i].predicate}`
-        yield* parseBody(options[i].body, julia)
+        yield* parseBody(options[i].body)
     }
     yield `else`
-    yield* parseBody(options[n].body, julia)
+    yield* parseBody(options[n].body)
     yield `end`
 }
 
@@ -57,7 +69,7 @@ function* fcall({name, params}) {
 
 function* fdecl({name, params, body}) {
     yield `function ${name}()`
-    yield* parseBody(body, julia)
+    yield* parseBody(body)
     yield 'end'
     if (name === 'main') {
         yield ''
@@ -67,18 +79,6 @@ function* fdecl({name, params, body}) {
 
 function* decl({name, type, value}) {
     yield `${name} = ${value}`
-}
-
-const julia = {
-    language: 'Julia',
-    extension: 'jl',
-    
-    comment,    
-    cond,
-    decl,
-    fcall,
-    fdecl,
-    package
 }
 
 module.exports = {

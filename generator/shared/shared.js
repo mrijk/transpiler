@@ -1,3 +1,5 @@
+const {partial} = require('lodash')
+
 function* parseStmt(stmt, generator) {
     switch (stmt.t) {
     case 'cond':
@@ -12,7 +14,7 @@ function* parseStmt(stmt, generator) {
     }
 }
 
-function* parseBody({stmts}, generator, level = 0) {
+function* parseBody(generator, {stmts}, level = 0) {
     yield* stmts
         .flatMap(stmt => Array.from(parseStmt(stmt, generator))
                  .map(s => indent(level + 1, s)))
@@ -27,7 +29,7 @@ function* parseFunction(f, generator) {
     }
 }
 
-function* parseFunctions(functions, generator, level = 0) {
+function* parseFunctions(generator, functions, level = 0) {
     yield* functions.flatMap(func => Array.from(parseFunction(func, generator))
                              .map(s => indent(level, s)))
 }
@@ -36,8 +38,11 @@ function indent(level, s) {
     return  ' '.repeat(level * 2) + s
 }
 
-module.exports = {
-    indent,
-    parseBody,
-    parseFunctions
+function shared(gen) {
+    return {
+        parseBody: partial(parseBody, gen),
+        parseFunctions: partial(parseFunctions, gen)
+    }
 }
+
+module.exports = shared

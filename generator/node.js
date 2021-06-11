@@ -2,8 +2,6 @@
 
 const {isEmpty, join} = require('lodash')
 
-const {parseBody, parseFunctions} = require('./shared/shared')
-
 const node = {
     language: 'Node',
     extension: 'js',
@@ -16,7 +14,7 @@ const node = {
     package
 }
 
-const {foo} = require('./f.js')(node)
+const {parseBody, parseFunctions} = require('./shared/shared')(node)
 
 const fmap = new Map([
     ['print', 'console.log']
@@ -27,28 +25,27 @@ function comment(comment) {
 }
 
 function* package({functions}) {
-    foo()
-    yield* parseFunctions(functions, node)
+    yield* parseFunctions(functions)
 }
 
 function* cond1(options) {
     yield `if (${options[0].predicate}) {`
-    yield* parseBody(options[0].body, node)
+    yield* parseBody(options[0].body)
     yield '}'
 }
 
 function* condn(options) {
     const n = options.length - 1
     yield `if (${options[0].predicate}) {`
-    yield* parseBody(options[0].body, node)
+    yield* parseBody(options[0].body)
     for (i = 1; i < n; i++) {
         yield `} else if (${options[i].predicate}) {`
-        yield* parseBody(options[i].body, node)
+        yield* parseBody(options[i].body)
         if (i != n - 1)
             yield '}'
     }
     yield `} else {`
-    yield* parseBody(options[n].body, node)
+    yield* parseBody(options[n].body)
     yield '}'
 }
 
@@ -70,7 +67,7 @@ function* fcall({name, params}) {
 
 function* fdecl({name, params, body}) {
     yield `function ${name}() {`
-    yield* parseBody(body, node)
+    yield* parseBody(body)
     yield `}`
     if (name === 'main') {
         yield ''
