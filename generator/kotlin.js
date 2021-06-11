@@ -1,6 +1,17 @@
 const {isEmpty, join} = require('lodash')
 
-const {parseBody} = require('./shared/shared')
+const kotlin = {
+    language: 'Kotlin',
+    
+    comment,
+    cond,
+    decl,
+    fcall,
+    fdecl,
+    package
+}
+
+const {parseBody, parseFunctions} = require('./shared/shared')(kotlin)
 
 const fmap = new Map([
     ['print', 'println']
@@ -10,27 +21,45 @@ function comment(comment) {
     return `// ${comment}`
 }
 
-function* cond({options}) {
-    const count = options.length
+function* package({functions}) {
+    yield* parseFunctions(functions)
+}
 
-    switch (count) {
+function* cond1(options) {
+    yield `if (${options[0].predicate}) {`
+    yield* parseBody(options[0].body)
+    yield '}'   
+}
+
+function* cond2(options) {
+    yield `if (${options[0].predicate}) {`
+    yield* parseBody(options[0].body)
+    yield `} else {`
+    yield* parseBody(options[0].body)
+    yield `}`
+}
+
+function* condn(options) {
+    const n = options.length - 1
+ 
+    yield `when {`
+    for (i = 0; i < n; i++) {
+        yield `  ${options[i].predicate} -> ${parseBody(options[i].body)}`
+    }
+    yield `  else -> ${parseBody(options[n].body)}`
+    yield '}'
+}
+
+function* cond({options}) {
+    switch (options.length) {
     case 1:
-        yield `if (${options[0].predicate}) {`
-        yield `  ${options[0].expr}`
-        yield '}'
+        yield *cond1(options)
+        break
     case 2:
-        yield `if (${options[0].predicate}) {`
-        yield `  ${options[0].expr}`
-        yield `} else {`
-        yield `  ${options[1].expr}`
-        yield `}`
+        yield *cond2(options)
+        break
     default:
-        yield `when {`
-        for (i = 0; i < count -1; i++) {
-            yield `  ${options[i].predicate} -> ${options[i].expr}`
-        }
-        yield `  else -> ${options[count - 1].expr}`
-        yield '}'
+        yield *condn(options)
     }
 }
 
@@ -41,19 +70,12 @@ function* fcall({name, params}) {
 
 function* fdecl({name, params, body}) {
     yield `fun ${name}() {`
-    yield* parseBody(body, kotlin)
+    yield* parseBody(body)
     yield '}'
 }
 
-const kotlin = {
-    language: 'Kotlin',
-    
-    decl: ({name, type, value}) => `val ${name} = ${value}`,
-
-    comment,
-    cond,
-    fcall,
-    fdecl
+function* decl({name, type, value}, level) {
+    yield `val ${name} = ${value}`
 }
 
 module.exports = {

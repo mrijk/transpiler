@@ -29,6 +29,12 @@ function* package({functions}) {
 }
 
 function* condn(options) {
+    yield `if (${options[0].predicate}) {`
+    yield* parseBody(options[0].body)
+    yield '}'   
+}
+
+function* condn(options) {
     const n = options.length - 1
     yield `if (${options[0].predicate}) {`
     yield* parseBody(options[0].body)
