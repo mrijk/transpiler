@@ -2,6 +2,7 @@ const {isEmpty, join} = require('lodash')
 
 const kotlin = {
     language: 'Kotlin',
+    extionsion: 'kt',
     
     comment,
     cond,

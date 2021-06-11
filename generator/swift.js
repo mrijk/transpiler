@@ -1,13 +1,29 @@
 const {isEmpty, join} = require('lodash')
 
-const {parseBody} = require('./shared/shared')
+const swift = {
+    language: 'Swift',
+    extension: 'swift',
+
+    comment,
+    cond,
+    decl,
+    fcall,
+    fdecl,
+    package,
+}
+
+const {parseBody, parseFunctions} = require('./shared/shared')(swift)
 
 const fmap = new Map([
     ['print', 'print']
 ])
 
 function comment(comment) {
-    return `# ${comment}`
+    return `// ${comment}`
+}
+
+function* package({functions}) {
+    yield* parseFunctions(functions)
 }
 
 function* main({stmts}, parseBody) {
@@ -16,12 +32,35 @@ function* main({stmts}, parseBody) {
     yield '}'
 }
 
-function* cond({options}) {
+function* cond1(options) {
     yield `if ${options[0].predicate} {`
-    yield `  ${options[0].expr}`
-    yield `} else {`
-    yield `  ${options[1].expr}`
+    yield* parseBody(options[0].body)
+    yield `}`
+}
+
+function* condn(options) {
+    const n = options.length - 1
+    yield `if ${options[0].predicate} {`
+    yield* parseBody(options[0].body)
     yield '}'
+    for (i = 1; i < n; i++) {
+        yield `else if ${options[i].predicate} {`
+        yield* parseBody(options[i].body)
+        yield '}'
+    }
+    yield `else {`
+    yield* parseBody(options[n].body)
+    yield `}`
+}
+
+function* cond({options}) {
+    switch (options.length) {
+    case 1:
+        yield* cond1(options)
+        break
+    default:
+        yield* condn(options)
+    }
 }
 
 function* fcall({name, params}) {
@@ -36,20 +75,12 @@ function* fcall({name, params}) {
 
 function* fdecl({name, params, body}) {
     yield `func ${name}() {`
-    yield* parseBody(body, swift)
+    yield* parseBody(body)
     yield `}`
 }
 
-const swift = {
-    language: 'Swift',
-
-    decl: ({name, type, value}) => `var ${name} = ${value}`,
-
-    comment,
-    main,
-    cond,
-    fcall,
-    fdecl
+function* decl({name, type, value}, level) {
+    yield `let ${name} = ${value};`
 }
 
 module.exports = {
