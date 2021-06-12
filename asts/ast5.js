@@ -22,14 +22,44 @@ const ast = {
                             options: [
                                 {
                                     predicate: "x < 5",
-                                    expr: "y = 0"
+                                    body: {
+                                        stmts: [
+                                            {
+                                                t: "fcall",
+                                                name: "print",
+                                                params: [
+                                                    "x less than 5!"
+                                                ]
+                                            }
+                                        ]
+                                    }
                                 },
                                 {
                                     predicate: "x < 7",
-                                    expr: "y = 1"
+                                    body: {
+                                        stmts: [
+                                            {
+                                                t: "fcall",
+                                                name: "print",
+                                                params: [
+                                                    "x less than 7!"
+                                                ]
+                                            }
+                                        ]
+                                    }
                                 },
                                 {
-                                    expr: "y = 2"
+                                    body: {
+                                        stmts: [
+                                            {
+                                                t: "fcall",
+                                                name: "print",
+                                                params: [
+                                                    "x something else"
+                                                ]
+                                            }
+                                        ]
+                                    }
                                 }
                             ]
                         }
