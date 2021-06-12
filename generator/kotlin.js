@@ -45,9 +45,11 @@ function* condn(options) {
  
     yield `when {`
     for (i = 0; i < n; i++) {
-        yield `  ${options[i].predicate} -> ${parseBody(options[i].body)}`
+        const body = Array.from(parseBody(options[i].body))
+        yield `  ${options[i].predicate} -> ${body}}`
     }
-    yield `  else -> ${parseBody(options[n].body)}`
+    const body = Array.from(parseBody(options[n].body))
+    yield `  else -> ${body}`
     yield '}'
 }
 

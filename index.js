@@ -39,4 +39,4 @@ function generate({package}, generator) {
     parseMain(package, generator)
 }
 
-generate(ast, perl)
+generate(ast, elixir)
