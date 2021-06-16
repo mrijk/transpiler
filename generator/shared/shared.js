@@ -34,6 +34,14 @@ function* parseFunctions(generator, functions, level = 0) {
                              .map(s => indent(level, s)))
 }
 
+function parseExpr({t, value}) {
+    return value
+}
+
+function parsePredicate(generator, {op, expr1, expr2}) {
+    return `${parseExpr(expr1)} ${op} ${parseExpr(expr2)}`
+}
+
 function indent(level, s) {
     return  ' '.repeat(level * 2) + s
 }
@@ -41,7 +49,8 @@ function indent(level, s) {
 function shared(gen) {
     return {
         parseBody: partial(parseBody, gen),
-        parseFunctions: partial(parseFunctions, gen)
+        parseFunctions: partial(parseFunctions, gen),
+        parsePredicate: partial(parsePredicate, gen)
     }
 }
 

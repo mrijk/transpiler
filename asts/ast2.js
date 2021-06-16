@@ -21,7 +21,17 @@ const ast = {
                             t: "cond",
                             options: [
                                 {
-                                    predicate: "x < 6",
+                                    predicate: {
+                                        op: "<",
+                                        expr1: {
+                                            t: "sym",
+                                            value: "x"
+                                        },
+                                        expr2: {
+                                            t: "const",
+                                            value: 5
+                                        }
+                                    },
                                     body: {
                                         stmts: [
                                             {

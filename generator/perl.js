@@ -1,3 +1,5 @@
+// node index.js | perl
+
 const {isEmpty, join} = require('lodash')
 
 const perl = {
@@ -12,7 +14,7 @@ const perl = {
     package
 }
 
-const {parseBody, parseFunctions} = require('./shared/shared')(perl)
+const {parseBody, parseFunctions, parsePredicate} = require('./shared/shared')(perl)
 
 const fmap = new Map([
     ['print', 'print']
@@ -27,7 +29,8 @@ function* package({functions}) {
 }
 
 function* cond1(options) {
-    yield `if (${options[0].predicate}) {`
+    const predicate = parsePredicate(options[0].predicate)
+    yield `if (${predicate}) {`
     yield* parseBody(options[0].body)
     yield `}`
 }
