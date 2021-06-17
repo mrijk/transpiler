@@ -11,10 +11,11 @@ const node = {
     decl,
     fcall,
     fdecl,
+    lambda,
     package
 }
 
-const {parseBody, parseFunctions, parsePredicate} = require('./shared/shared')(node)
+const {parseBody, parseExpr, parseFunctions, parsePredicate} = require('./shared/shared')(node)
 
 const fmap = new Map([
     ['print', 'console.log']
@@ -62,8 +63,12 @@ function* cond({options}) {
 
 function* fcall({name, params}) {
     const fname = fmap.get(name) || name
-    const paramString = join(params)
-    yield `${fname}("${paramString}")`
+    if (isEmpty(params)) {
+        yield `${fname}()`
+    } else {
+        const paramString = join(params)
+        yield `${fname}("${paramString}")`
+    }
 }
 
 function* fdecl({name, params, body}) {
@@ -76,8 +81,12 @@ function* fdecl({name, params, body}) {
     }
 }
 
-function* decl({name, type, value}) {
-    yield `const ${name} = ${value}`
+function* decl({name, type, expr}) {
+    yield `const ${name} = ${parseExpr(expr)}`
+}
+
+function* lambda() {
+    yield `() => {)}`
 }
 
 module.exports = {

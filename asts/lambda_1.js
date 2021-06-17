@@ -15,7 +15,8 @@ const ast = {
                             t: "decl",
                             name: "f",
                             type: "lambda",
-                            value: {
+                            expr: {
+                                t: "lambda",
                                 params: [],
                                 body: {
                                     stmts: [
@@ -30,14 +31,12 @@ const ast = {
                                 }
                             }
                         },
-                        stmts: [
-                            {
-                                t: "fcall",
-                                name: "f",
-                                params: [
-                                ]                                                
-                            }
-                        ]
+                        {
+                            t: "fcall",
+                            name: "f",
+                            params: [
+                            ]                                                
+                        }
                     ]
                 }
             }

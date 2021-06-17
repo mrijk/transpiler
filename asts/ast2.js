@@ -15,7 +15,10 @@ const ast = {
                             t: "decl",
                             name: "x",
                             type: "int",
-                            value: "5"
+                            expr: {
+                                t: "const",
+                                value: "5"
+                            }
                         },
                         {
                             t: "cond",
