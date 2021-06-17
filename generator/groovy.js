@@ -4,17 +4,18 @@ const {isEmpty, join} = require('lodash')
 
 const groovy = {
     language: 'Groovy',
-    extension: '',
+    extension: 'groovy',
     
     comment,
     cond,
     decl,
     fcall,
     fdecl,
+    lambda,
     package
 }
 
-const {parseBody, parseFunctions} = require('./shared/shared')(groovy)
+const {parseBody, parseExpr, parseFunctions} = require('./shared/shared')(groovy)
 
 const fmap = new Map([
     ['print', 'println']
@@ -79,8 +80,13 @@ function* fdecl({name, params, body}) {
     }
 }
 
-function* decl({name, type, value}, level) {
-    yield `def ${name} = ${value}`
+function* decl({name, type, expr}) {
+    yield `def ${name} = ${parseExpr(expr)}`
+}
+
+function* lambda({params, body}) {
+    const parsedBody = Array.from(parseBody(body, -1))
+    yield `{${parsedBody}}`
 }
 
 module.exports = {

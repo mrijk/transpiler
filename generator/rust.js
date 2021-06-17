@@ -9,10 +9,11 @@ const rust = {
     decl,
     fcall,
     fdecl,
+    lambda,
     package
 }
 
-const {parseBody, parseFunctions} = require('./shared/shared')(rust)
+const {parseBody, parseExpr, parseFunctions} = require('./shared/shared')(rust)
 
 const fmap = new Map([
     ['print', 'println!']
@@ -26,9 +27,9 @@ function* package({functions}) {
     yield* parseFunctions(functions)
 }
 
-function* cond1(options) {
-    yield `if ${options[0].predicate} {`
-    yield* parseBody(options[0].body)
+function* cond1([{predicate, body}]) {
+    yield `if ${predicate} {`
+    yield* parseBody(body)
     yield `}`
 }
 
@@ -60,6 +61,7 @@ function* cond({options}) {
 function* fcall({name, params}) {
     const fname = fmap.get(name) || name
     if (isEmpty(params)) {
+        yield `${fname}()`
     } else {
         const paramString = join(params)
         yield `${fname}("${paramString}")`
@@ -72,8 +74,13 @@ function* fdecl({name, params, body}) {
     yield '}'
 }
 
-function* decl({name, type, value}, level) {
-    yield `let ${name} = ${value};`
+function* decl({name, type, expr}) {
+    yield `let ${name} = ${parseExpr(expr)}`
+}
+
+function* lambda({params, body}) {
+    const parsedBody = Array.from(parseBody(body, -1))
+    yield `|| ${parsedBody};`
 }
 
 module.exports = {

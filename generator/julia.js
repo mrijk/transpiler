@@ -11,10 +11,11 @@ const julia = {
     decl,
     fcall,
     fdecl,
+    lambda,
     package
 }
 
-const {parseBody, parseFunctions, parsePredicate} = require('./shared/shared')(julia)
+const {parseBody, parseExpr, parseFunctions, parsePredicate} = require('./shared/shared')(julia)
 
 const fmap = new Map([
     ['print', 'println']
@@ -77,8 +78,13 @@ function* fdecl({name, params, body}) {
     }
 }
 
-function* decl({name, type, value}) {
-    yield `${name} = ${value}`
+function* decl({name, type, expr}) {
+    yield `${name} = ${parseExpr(expr)}`
+}
+
+function* lambda({params, body}) {
+    const parsedBody = Array.from(parseBody(body, -1))
+    yield `() -> ${parsedBody}`
 }
 
 module.exports = {

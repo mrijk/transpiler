@@ -11,10 +11,11 @@ const lua = {
     decl,
     fcall,
     fdecl,
+    lambda,
     package
 }
 
-const {parseBody, parseFunctions} = require('./shared/shared')(lua)
+const {parseBody, parseExpr, parseFunctions} = require('./shared/shared')(lua)
 
 const fmap = new Map([
     ['print', 'print']
@@ -28,9 +29,9 @@ function* package({functions}) {
     yield* parseFunctions(functions)
 }
 
-function* cond1(options) {
-    yield `if ${options[0].predicate} then`
-    yield* parseBody(options[0].body)
+function* cond1([{predicate, body}]) {
+    yield `if ${predicate} then`
+    yield* parseBody(body)
     yield 'end'
 }
 
@@ -79,8 +80,13 @@ function* fdecl({name, params, returns, body}) {
     }
 }
 
-function* decl({name, type, value}) {
-    yield `${name} = ${value}`
+function* decl({name, type, expr}) {
+    yield `${name} = ${parseExpr(expr)}`
+}
+
+function* lambda({params, body}) {
+    const parsedBody = Array.from(parseBody(body, -1))
+    yield `function() ${parsedBody} end`
 }
 
 module.exports = {

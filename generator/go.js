@@ -9,10 +9,11 @@ const go = {
     decl,
     fcall,
     fdecl,
+    lambda,
     package
 }
 
-const {parseBody, parseFunctions, parsePredicate} = require('./shared/shared')(go)
+const {parseBody, parseExpr, parseFunctions, parsePredicate} = require('./shared/shared')(go)
 
 const fmap = new Map([
     ['print', 'println']
@@ -73,8 +74,13 @@ function* fdecl({name, params, body}) {
     yield '}'
 }
 
-function* decl({name, type, value}) {
-    yield `var ${name} ${type} = ${value}`
+function* decl({name, type, expr}) {
+    yield `var ${name} = ${parseExpr(expr)}`
+}
+
+function* lambda({params, body}) {
+    const parsedBody = Array.from(parseBody(body, -1))
+    yield `func() {${parsedBody}}`
 }
 
 module.exports = {

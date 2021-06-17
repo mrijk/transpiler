@@ -11,10 +11,11 @@ const ruby = {
     decl,
     fcall,
     fdecl,
+    lambda,
     package
 }
 
-const {parseBody, parseFunctions, parsePredicate} = require('./shared/shared')(ruby)
+const {parseBody, parseExpr, parseFunctions, parsePredicate} = require('./shared/shared')(ruby)
 
 const fmap = new Map([
     ['print', 'puts']
@@ -60,6 +61,7 @@ function* cond({options}) {
 
 function* fcall({name, params}) {
     const fname = fmap.get(name) || name
+    // TODO: if this is a Lambda, Ruby needs .call
     if (isEmpty(params)) {
         yield `${fname}`
     } else {
@@ -78,8 +80,13 @@ function* fdecl({name, params, body}) {
     }
 }
 
-function* decl({name, type, value}) {
-    yield `${name} = ${value}`
+function* decl({name, type, expr}) {
+    yield `${name} = ${parseExpr(expr)}`
+}
+
+function* lambda({params, body}) {
+    const parsedBody = Array.from(parseBody(body, -1))
+    yield `-> {${parsedBody}}`
 }
 
 module.exports = {
