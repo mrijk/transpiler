@@ -11,10 +11,11 @@ const python = {
     decl,
     fcall,
     fdecl,
+    lambda,
     package
 }
 
-const {parseBody, parseFunctions, parsePredicate} = require('./shared/shared')(python)
+const {parseBody, parseExpr, parseFunctions, parsePredicate} = require('./shared/shared')(python)
 
 const fmap = new Map([
     ['print', 'print']
@@ -75,8 +76,13 @@ function* fdecl({name, params, body}) {
     }
 }
 
-function* decl({name, type, value}) {
-    yield `${name} = ${value}`
+function* decl({name, type, expr}) {
+    yield `${name} = ${parseExpr(expr)}`
+}
+
+function* lambda({params, body}) {
+    const parsedBody = Array.from(parseBody(body, -1))
+    yield `lambda : ${parsedBody}`
 }
 
 module.exports = {

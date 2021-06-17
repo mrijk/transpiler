@@ -85,8 +85,9 @@ function* decl({name, type, expr}) {
     yield `const ${name} = ${parseExpr(expr)}`
 }
 
-function* lambda() {
-    yield `() => {)}`
+function* lambda({params, body}) {
+    const parsedBody = Array.from(parseBody(body, -1))
+    yield `() => {${parsedBody}}`
 }
 
 module.exports = {
