@@ -30,7 +30,7 @@ function header({comment, language}) {
 }
 
 function parseMain(package, generator) {
-    for (l of generator.package(package, generator))
+    for (l of generator.package(package))
         out(l)
 }
 
@@ -39,4 +39,4 @@ function generate({package}, generator) {
     parseMain(package, generator)
 }
 
-generate(ast, perl)
+generate(ast, python)

@@ -14,7 +14,7 @@ const ruby = {
     package
 }
 
-const {parseBody, parseFunctions} = require('./shared/shared')(ruby)
+const {parseBody, parseFunctions, parsePredicate} = require('./shared/shared')(ruby)
 
 const fmap = new Map([
     ['print', 'puts']
@@ -29,9 +29,10 @@ function* package({functions}) {
 }
 
 function* cond1(options) {
-    yield `if ${options[0].predicate} {`
+    const predicate = parsePredicate(options[0].predicate)
+    yield `if ${predicate}`
     yield* parseBody(options[0].body)
-    yield `}`
+    yield `end`
 }
 
 function* condn(options) {

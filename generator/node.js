@@ -14,7 +14,7 @@ const node = {
     package
 }
 
-const {parseBody, parseFunctions} = require('./shared/shared')(node)
+const {parseBody, parseFunctions, parsePredicate} = require('./shared/shared')(node)
 
 const fmap = new Map([
     ['print', 'console.log']
@@ -29,7 +29,8 @@ function* package({functions}) {
 }
 
 function* cond1(options) {
-    yield `if (${options[0].predicate}) {`
+    const predicate = parsePredicate(options[0].predicate)
+    yield `if (${predicate}) {`
     yield* parseBody(options[0].body)
     yield '}'
 }
