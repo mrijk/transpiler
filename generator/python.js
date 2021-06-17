@@ -28,10 +28,9 @@ function* package({functions}) {
     yield* parseFunctions(functions)
 }
 
-function* cond1(options) {
-    const predicate = parsePredicate(options[0].predicate)
-    yield `if ${predicate}:`
-    yield* parseBody(options[0].body)
+function* cond1([{predicate, body}]) {
+    yield `if ${parsePredicate(predicate)}:`
+    yield* parseBody(body)
 }
 
 function* condn(options) {

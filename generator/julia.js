@@ -14,7 +14,7 @@ const julia = {
     package
 }
 
-const {parseBody, parseFunctions} = require('./shared/shared')(julia)
+const {parseBody, parseFunctions, parsePredicate} = require('./shared/shared')(julia)
 
 const fmap = new Map([
     ['print', 'println']
@@ -28,9 +28,9 @@ function* package({functions}) {
     yield* parseFunctions(functions)
 }
 
-function* cond1(options) {
-    yield `if ${options[0].predicate} {`
-    yield* parseBody(options[0].body,)
+function* cond1([{predicate, body}]) {
+    yield `if ${parsePredicate(predicate)} {`
+    yield* parseBody(body)
     yield `}`
 }
 

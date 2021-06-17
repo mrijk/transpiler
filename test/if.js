@@ -16,7 +16,7 @@ const {ruby} = require('../generator/ruby')
 const {rust} = require('../generator/rust')
 const {swift} = require('../generator/swift')
 
-const {ast} = require('../asts/ast3')
+const {ast} = require('../asts/ast2')
 
 function stringToArray(s) {
     return s.split(/\r\n|\r|\n/)
@@ -38,7 +38,7 @@ function verify(generator, expected) {
 }
 
 describe('Test C', () => {
-    it('should generate an if/else', () => {
+    it('should generate an if', () => {
         const expected = 
            `#include <stdio.h>
 
@@ -46,8 +46,6 @@ describe('Test C', () => {
               int x = 5;
               if (x < 5) {
                  printf("x less than 5!");
-              } else {
-                 printf("x larger or equal to 5!");
               }
               return 0;
             }`
@@ -57,7 +55,7 @@ describe('Test C', () => {
 })
 
 describe('Test Go', () => {
-    it('should generate an if/else', () => {
+    it('should generate an if', () => {
         const expected = 
            `package main
 
@@ -65,8 +63,6 @@ describe('Test Go', () => {
               var x int = 5
               if (x < 5) {
                  println("x less than 5!")
-              } else {
-                 println("x larger or equal to 5!")
               }
             }`
 
@@ -75,15 +71,13 @@ describe('Test Go', () => {
 })
 
 describe('Test Julia', () => {
-    it('should generate an if/else', () => {
+    it('should generate an if', () => {
         const expected = 
            `function main()
               x = 5
-              if x < 5
+              if x < 5 {
                  println("x less than 5!")
-              else
-                 println("x larger or equal to 5!")
-              end
+              }
             end
 
             main()`
@@ -93,14 +87,12 @@ describe('Test Julia', () => {
 })
 
 describe('Test Node', () => {
-    it('should generate an if/else', () => {
+    it('should generate an if', () => {
         const expected = 
            `function main() {
               const x = 5
               if (x < 5) {
                  console.log("x less than 5!")
-              } else {
-                 console.log("x larger or equal to 5!")
               }
             }
   
@@ -111,14 +103,12 @@ describe('Test Node', () => {
 })
 
 describe('Test Perl', () => {
-    it('should generate an if/else', () => {
+    it('should generate an if', () => {
         const expected = 
            `sub main() {
               $x = 5;
               if (x < 5) {
                  print("x less than 5!");
-              } else {
-                 print("x larger or equal to 5!");
               }
             }
 
@@ -129,31 +119,27 @@ describe('Test Perl', () => {
 })
 
 describe('Test Python', () => {
-    it('should generate an if/else', () => {
+    it('should generate an if', () => {
         const expected = 
            `def main():
               x = 5
               if x < 5:
-                print("x less than 5!")
-              else:
-                print("x larger or equal to 5!")
-
+                 print("x less than 5!")
+              
             if __name__ == "__main__":
-              main()`
+               main()`
 
         verify(python, expected)
     })
 })
 
 describe('Test Ruby', () => {
-    it('should generate an if/else', () => {
+    it('should generate an if', () => {
         const expected = 
            `def main()
               x = 5
               if x < 5
-                puts "x less than 5!"
-              else
-                puts "x larger or equal to 5!"
+                 puts "x less than 5!"
               end
             end
 
