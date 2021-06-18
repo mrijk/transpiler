@@ -37,10 +37,10 @@ function* cond1([{predicate, body}]) {
 
 function* condn(options) {
     const n = options.length - 1
-    yield `if (${options[0].predicate}) {`
+    yield `if (${parsePredicate(options[0].predicate)}) {`
     yield* parseBody(options[0].body)
     for (i = 1; i < n; i++) {
-        yield `} elsif (${options[i].predicate}) {`
+        yield `} elsif (${parsePredicate(options[i].predicate)}) {`
         yield* parseBody(options[i].body)
         yield '}'
     }
@@ -80,7 +80,7 @@ function* fdecl({name, params, body}) {
 }
 
 function* decl({name, type, expr}) {
-    yield `$${name} = ${parseExpr(expr)}`
+    yield `$${name} = ${parseExpr(expr)};`
 }
 
 function* lambda({params, body}) {

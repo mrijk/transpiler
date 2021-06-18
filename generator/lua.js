@@ -15,7 +15,7 @@ const lua = {
     package
 }
 
-const {parseBody, parseExpr, parseFunctions} = require('./shared/shared')(lua)
+const {parseBody, parseExpr, parseFunctions, parsePredicate} = require('./shared/shared')(lua)
 
 const fmap = new Map([
     ['print', 'print']
@@ -30,17 +30,17 @@ function* package({functions}) {
 }
 
 function* cond1([{predicate, body}]) {
-    yield `if ${predicate} then`
+    yield `if ${parsePredicate(predicate)} then`
     yield* parseBody(body)
     yield 'end'
 }
 
 function* condn(options) {
     const n = options.length - 1
-    yield `if ${options[0].predicate} then`
+    yield `if ${parsePredicate(options[0].predicate)} then`
     yield* parseBody(options[0].body)
     for (i = 1; i < n; i++) {
-        yield `elseif ${options[i].predicate} then`
+        yield `elseif ${parsePredicate(options[i].predicate)} then`
         yield* parseBody(options[i].body)
         if (i != n - 1)
             yield 'end'

@@ -29,19 +29,18 @@ function* package({functions}) {
     yield* parseFunctions(functions)
 }
 
-function* cond1(options) {
-    const predicate = parsePredicate(options[0].predicate)
-    yield `if (${predicate}) {`
-    yield* parseBody(options[0].body)
+function* cond1([{predicate, body}]) {
+    yield `if (${parsePredicate(predicate)}) {`
+    yield* parseBody(body)
     yield '}'
 }
 
 function* condn(options) {
     const n = options.length - 1
-    yield `if (${options[0].predicate}) {`
+    yield `if (${parsePredicate(options[0].predicate)}) {`
     yield* parseBody(options[0].body)
     for (i = 1; i < n; i++) {
-        yield `} else if (${options[i].predicate}) {`
+        yield `} else if (${parsePredicate(options[i].predicate)}) {`
         yield* parseBody(options[i].body)
         if (i != n - 1)
             yield '}'

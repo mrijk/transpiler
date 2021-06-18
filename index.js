@@ -14,7 +14,7 @@ const {ruby} = require('./generator/ruby')
 const {rust} = require('./generator/rust')
 const {swift} = require('./generator/swift')
 
-const {ast} = require('./asts/lambda_1')
+const {ast} = require('./asts/ast3')
 
 
 function out(s, indent = 0) {
@@ -39,4 +39,4 @@ function generate({package}, generator) {
     parseMain(package, generator)
 }
 
-generate(ast, rust)
+generate(ast, go)

@@ -37,9 +37,11 @@ function* parseFunctions(generator, functions, level = 0) {
 function parseExpr(generator, expr) {
     switch (expr.t) {
     case 'const':
-        return value
+        return expr.value
     case 'lambda':
         return Array.from(generator.lambda(expr))
+    default:
+        return expr.value
     }
 }
 

@@ -14,7 +14,7 @@ const C = {
     package
 }
 
-const {parseBody, parseFunctions, parsePredicate} = require('./shared/shared')(C)
+const {parseBody, parseExpr, parseFunctions, parsePredicate} = require('./shared/shared')(C)
 
 const fmap = new Map([
     ['print', 'printf']
@@ -37,10 +37,10 @@ function* cond1([{predicate, body}]) {
 
 function* condn(options) {
     const n = options.length - 1
-    yield `if (${options[0].predicate}) {`
+    yield `if (${parsePredicate(options[0].predicate)}) {`
     yield* parseBody(options[0].body)
     for (i = 1; i < n; i++) {
-        yield `} else if (${options[i].predicate}) {`
+        yield `} else if (${parsePredicate(options[i].predicate)}) {`
         yield* parseBody(options[i].body)
         yield '}'
     }
@@ -78,8 +78,8 @@ function* fdecl({name, params, returns, body}) {
     yield '}'
 }
 
-function* decl({name, type, value}) {
-    yield `${type} ${name} = ${value};`
+function* decl({name, type, expr}) {
+    yield `${type} ${name} = ${parseExpr(expr)};`
 }
 
 module.exports = {

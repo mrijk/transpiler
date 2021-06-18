@@ -60,7 +60,7 @@ describe('Test Go', () => {
            `package main
 
             func main() {
-              var x int = 5
+              var x = 5
               if (x < 5) {
                  println("x less than 5!")
               }
