@@ -41,8 +41,9 @@ function* cond1([{predicate, body}]) {
 
 function* condn(options) {
     const n = options.length - 1
-    yield `if ${parsePredicate(options[0].predicate)} {`
-    yield* parseBody(options[0].body)
+    const {predicate, body} = options[0]
+    yield `if ${parsePredicate(predicate)} {`
+    yield* parseBody(body)
     for (i = 1; i < n; i++) {
         const {predicate, body} = options[i]
         yield `} else if ${parsePredicate(predicate)} {`
@@ -65,7 +66,7 @@ function* cond({options}) {
 
 function* fcall({name, params}) {
     const fname = fmap.get(name) || name
-        if (isEmpty(params)) {
+    if (isEmpty(params)) {
         yield `${fname}()`
     } else {
         const paramString = join(params)

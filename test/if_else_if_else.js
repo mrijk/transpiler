@@ -17,28 +17,10 @@ const {rust} = require('../generator/rust')
 const {swift} = require('../generator/swift')
 
 const {ast} = require('../asts/ast5')
-
-function stringToArray(s) {
-    return s.split(/\r\n|\r|\n/)
-}
-
-function removeWhiteSpace(x) {
-    return filter(x.map(trim), x => !isEmpty(x))   
-}
-
-function compare(result, expected) {
-    const trimmedResult = removeWhiteSpace(result)
-    const expectedResult = removeWhiteSpace(stringToArray(expected))
-    expect(trimmedResult).to.eql(expectedResult)
-}
-
-function verify(generator, expected) {
-    const result = Array.from(generator.package(ast.package))
-    compare(result, expected)
-}
+const {verify} = require('./util')
 
 describe('Test C', () => {
-    it('should generate an if/else', () => {
+    it('should generate an if/else if/else', () => {
         const expected = 
            `#include <stdio.h>
 
@@ -54,12 +36,12 @@ describe('Test C', () => {
               return 0;
             }`
 
-        verify(C, expected)
+        verify(C, ast, expected)
     })
 })
 
 describe('Test Go', () => {
-    it('should generate an if/else', () => {
+    it('should generate an if/else if/else', () => {
         const expected = 
            `package main
 
@@ -74,12 +56,12 @@ describe('Test Go', () => {
               }
             }`
 
-        verify(go, expected)
+        verify(go, ast, expected)
     })
 })
 
 describe('Test Groovy', () => {
-    it('should generate an if/else', () => {
+    it('should generate an if/else if/else', () => {
         const expected = 
            `def main() {
               def x = 5
@@ -94,12 +76,12 @@ describe('Test Groovy', () => {
 
             main()`
 
-        verify(groovy, expected)
+        verify(groovy, ast, expected)
     })
 })
 
 describe('Test Julia', () => {
-    it('should generate an if/else', () => {
+    it('should generate an if/else if/else', () => {
         const expected = 
            `function main()
               x = 5
@@ -114,12 +96,28 @@ describe('Test Julia', () => {
 
             main()`
 
-        verify(julia, expected)
+        verify(julia, ast, expected)
+    })
+})
+
+describe('Test Kotlin', () => {
+    it('should generate an if/else if/else', () => {
+        const expected = 
+           `fun main() {
+              val x = 5
+              when {
+                x < 5 -> println("x less than 5!")
+                x < 7 -> println("x less than 7!")
+                else -> println("x something else")
+              }
+            }`
+
+        verify(kotlin, ast, expected)
     })
 })
 
 describe('Test Lua', () => {
-    it('should generate an if/else', () => {
+    it('should generate an if/else if/else', () => {
         const expected = 
            `function main()
               x = 5
@@ -134,12 +132,12 @@ describe('Test Lua', () => {
 
             main()`
 
-        verify(lua, expected)
+        verify(lua, ast, expected)
     })
 })
 
 describe('Test Node', () => {
-    it('should generate an if/else', () => {
+    it('should generate an if/else if/else', () => {
         const expected = 
            `function main() {
               const x = 5
@@ -154,12 +152,12 @@ describe('Test Node', () => {
   
             main()`
 
-        verify(node, expected)
+        verify(node, ast, expected)
     })
 })
 
 describe('Test Perl', () => {
-    it('should generate an if/else', () => {
+    it('should generate an if/else if/else', () => {
         const expected = 
            `sub main() {
               $x = 5;
@@ -174,12 +172,12 @@ describe('Test Perl', () => {
 
             main()`
 
-        verify(perl, expected)
+        verify(perl, ast, expected)
     })
 })
 
 describe('Test Python', () => {
-    it('should generate an if/else', () => {
+    it('should generate an if/else if/else', () => {
         const expected = 
            `def main():
               x = 5
@@ -193,12 +191,12 @@ describe('Test Python', () => {
             if __name__ == "__main__":
               main()`
 
-        verify(python, expected)
+        verify(python, ast, expected)
     })
 })
 
 describe('Test Ruby', () => {
-    it('should generate an if/else', () => {
+    it('should generate an if/else if/else', () => {
         const expected = 
            `def main()
               x = 5
@@ -213,6 +211,6 @@ describe('Test Ruby', () => {
 
             main`
 
-        verify(ruby, expected)
+        verify(ruby, ast, expected)
     })
 })
