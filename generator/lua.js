@@ -71,7 +71,7 @@ function* fcall({name, params}) {
 }
 
 function* fdecl({name, params, returns, body}) {
-    yield `function ${name} ()`
+    yield `function ${name}()`
     yield* parseBody(body)
     yield 'end'
     if (name === 'main') {

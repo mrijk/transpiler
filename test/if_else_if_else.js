@@ -16,7 +16,7 @@ const {ruby} = require('../generator/ruby')
 const {rust} = require('../generator/rust')
 const {swift} = require('../generator/swift')
 
-const {ast} = require('../asts/ast3')
+const {ast} = require('../asts/ast5')
 
 function stringToArray(s) {
     return s.split(/\r\n|\r|\n/)
@@ -46,8 +46,10 @@ describe('Test C', () => {
               int x = 5;
               if (x < 5) {
                  printf("x less than 5!");
+              } else if (x < 7) {
+                 printf("x less than 7!");
               } else {
-                 printf("x larger or equal to 5!");
+                 printf("x something else");
               }
               return 0;
             }`
@@ -65,8 +67,10 @@ describe('Test Go', () => {
               var x = 5
               if (x < 5) {
                  println("x less than 5!")
+              else if (x < 7) {
+                 println("x less than 7!")
               } else {
-                 println("x larger or equal to 5!")
+                 println("x something else")
               }
             }`
 
@@ -81,8 +85,10 @@ describe('Test Groovy', () => {
               def x = 5
               if (x < 5) {
                  println "x less than 5!"
+              } else if (x < 7) {
+                 println "x less than 7!"
               } else {
-                 println "x larger or equal to 5!"
+                 println "x something else"
               }
             }
 
@@ -99,8 +105,10 @@ describe('Test Julia', () => {
               x = 5
               if x < 5
                  println("x less than 5!")
+              elseif x < 7
+                 println("x less than 7!")
               else
-                 println("x larger or equal to 5!")
+                 println("x something else")
               end
             end
 
@@ -117,8 +125,10 @@ describe('Test Lua', () => {
               x = 5
               if x < 5 then
                  print("x less than 5!")
+              elseif x < 7 then
+                 print("x less than 7!")
               else
-                print("x larger or equal to 5!")
+                print("x something else")
               end
             end
 
@@ -135,8 +145,10 @@ describe('Test Node', () => {
               const x = 5
               if (x < 5) {
                  console.log("x less than 5!")
+              } else if (x < 7) {
+                 console.log("x less than 7!")
               } else {
-                 console.log("x larger or equal to 5!")
+                 console.log("x something else")
               }
             }
   
@@ -153,8 +165,10 @@ describe('Test Perl', () => {
               $x = 5;
               if (x < 5) {
                  print("x less than 5!");
+              } elsif (x < 7) {
+                 print("x less than 7!");
               } else {
-                 print("x larger or equal to 5!");
+                 print("x something else");
               }
             }
 
@@ -171,8 +185,10 @@ describe('Test Python', () => {
               x = 5
               if x < 5:
                 print("x less than 5!")
+              elif x < 7:
+                print("x less than 7!")
               else:
-                print("x larger or equal to 5!")
+                print("x something else")
 
             if __name__ == "__main__":
               main()`
@@ -188,8 +204,10 @@ describe('Test Ruby', () => {
               x = 5
               if x < 5
                 puts "x less than 5!"
+              elseif x < 7
+                puts "x less than 7!"
               else
-                puts "x larger or equal to 5!"
+                puts "x something else"
               end
             end
 

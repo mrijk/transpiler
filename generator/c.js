@@ -42,7 +42,6 @@ function* condn(options) {
     for (i = 1; i < n; i++) {
         yield `} else if (${parsePredicate(options[i].predicate)}) {`
         yield* parseBody(options[i].body)
-        yield '}'
     }
     yield `} else {`
     yield* parseBody(options[n].body)

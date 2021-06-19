@@ -40,9 +40,9 @@ function* condn(options) {
     yield `if (${parsePredicate(options[0].predicate)}) {`
     yield* parseBody(options[0].body)
     for (i = 1; i < n; i++) {
-        yield `} elsif (${parsePredicate(options[i].predicate)}) {`
-        yield* parseBody(options[i].body)
-        yield '}'
+        const {predicate, body} = options[i]
+        yield `} elsif (${parsePredicate(predicate)}) {`
+        yield* parseBody(body)
     }
     yield `} else {`
     yield* parseBody(options[n].body)

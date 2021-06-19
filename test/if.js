@@ -116,6 +116,22 @@ describe('Test Kotlin', () => {
     })
 })
 
+describe('Test Lua', () => {
+    it('should generate an if', () => {
+        const expected = 
+           `function main()
+              x = 5
+              if x < 5 then
+                 print("x less than 5!")
+              end
+            end
+
+            main()`
+
+        verify(lua, expected)
+    })
+})
+
 describe('Test Node', () => {
     it('should generate an if', () => {
         const expected = 

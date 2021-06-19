@@ -15,13 +15,26 @@ const ast = {
                             t: "decl",
                             name: "x",
                             type: "int",
-                            value: "5"
+                            expr: {
+                                t: "const",
+                                value: "5"
+                            }
                         },
                         {
                             t: "cond",
                             options: [
                                 {
-                                    predicate: "x < 5",
+                                    predicate: {
+                                        op: "<",
+                                        expr1: {
+                                            t: "sym",
+                                            value: "x"
+                                        },
+                                        expr2: {
+                                            t: "const",
+                                            value: 5
+                                        }
+                                    },                                   
                                     body: {
                                         stmts: [
                                             {
@@ -35,7 +48,17 @@ const ast = {
                                     }
                                 },
                                 {
-                                    predicate: "x < 7",
+                                    predicate: {
+                                        op: "<",
+                                        expr1: {
+                                            t: "sym",
+                                            value: "x"
+                                        },
+                                        expr2: {
+                                            t: "const",
+                                            value: 7
+                                        }
+                                    },
                                     body: {
                                         stmts: [
                                             {
