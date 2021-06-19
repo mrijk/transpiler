@@ -9,10 +9,11 @@ const kotlin = {
     decl,
     fcall,
     fdecl,
+    lambda,
     package
 }
 
-const {parseBody, parseFunctions} = require('./shared/shared')(kotlin)
+const {parseBody, parseExpr, parseFunctions, parsePredicate} = require('./shared/shared')(kotlin)
 
 const fmap = new Map([
     ['print', 'println']
@@ -26,9 +27,9 @@ function* package({functions}) {
     yield* parseFunctions(functions)
 }
 
-function* cond1(options) {
-    yield `if (${options[0].predicate}) {`
-    yield* parseBody(options[0].body)
+function* cond1([{predicate, body}]) {
+    yield `if (${parsePredicate(predicate)}) {`
+    yield* parseBody(body)
     yield '}'   
 }
 
@@ -36,7 +37,7 @@ function* cond2(options) {
     yield `if (${options[0].predicate}) {`
     yield* parseBody(options[0].body)
     yield `} else {`
-    yield* parseBody(options[0].body)
+    yield* parseBody(options[1].body)
     yield `}`
 }
 
@@ -77,8 +78,13 @@ function* fdecl({name, params, body}) {
     yield '}'
 }
 
-function* decl({name, type, value}, level) {
-    yield `val ${name} = ${value}`
+function* decl({name, type, expr}) {
+    yield `val ${name} = ${parseExpr(expr)}`
+}
+
+function* lambda({params, body}) {
+    const parsedBody = Array.from(parseBody(body, -1))
+    yield `{ ${parsedBody} }`
 }
 
 module.exports = {

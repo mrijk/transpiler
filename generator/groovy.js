@@ -15,7 +15,7 @@ const groovy = {
     package
 }
 
-const {parseBody, parseExpr, parseFunctions} = require('./shared/shared')(groovy)
+const {parseBody, parseExpr, parseFunctions, parsePredicate} = require('./shared/shared')(groovy)
 
 const fmap = new Map([
     ['print', 'println']
@@ -29,23 +29,22 @@ function* package({functions}) {
     yield* parseFunctions(functions)
 }
 
-function* condn(options) {
-    yield `if (${options[0].predicate}) {`
-    yield* parseBody(options[0].body)
+function* cond1([{predicate, body}]) {
+    yield `if (${parsePredicate(predicate)}) {`
+    yield* parseBody(body)
     yield '}'   
 }
 
 function* condn(options) {
     const n = options.length - 1
-    yield `if (${options[0].predicate}) {`
+    yield `if (${parsePredicate(options[0].predicate)}) {`
     yield* parseBody(options[0].body)
-    yield '}'
     for (i = 1; i < n; i++) {
-        yield `else if (${options[i].predicate}) {`
-        yield* parseBody(options[i].body)
-        yield '}'
+        const {predicate, body} = options[i]
+        yield `} else if (${parsePredicate(predicate)}) {`
+        yield* parseBody(body)
     }
-    yield `else {`
+    yield `} else {`
     yield* parseBody(options[n].body)
     yield `}`
 }

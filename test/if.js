@@ -5,8 +5,8 @@ const {expect} = require('chai')
 const {C} = require('../generator/c')
 const {elixir} = require('../generator/elixir')
 const {go} = require('../generator/go')
-const {julia} = require('../generator/julia')
 const {groovy} = require('../generator/groovy')
+const {julia} = require('../generator/julia')
 const {kotlin} = require('../generator/kotlin')
 const {lua} = require('../generator/lua')
 const {node} = require('../generator/node')
@@ -70,6 +70,22 @@ describe('Test Go', () => {
     })
 })
 
+describe('Test Groovy', () => {
+    it('should generate an if', () => {
+        const expected = 
+           `def main() {
+              def x = 5
+              if (x < 5) {
+                 println "x less than 5!"
+              }
+            }
+
+            main()`
+
+        verify(groovy, expected)
+    })
+})
+
 describe('Test Julia', () => {
     it('should generate an if', () => {
         const expected = 
@@ -83,6 +99,20 @@ describe('Test Julia', () => {
             main()`
 
         verify(julia, expected)
+    })
+})
+
+describe('Test Kotlin', () => {
+    it('should generate an if', () => {
+        const expected = 
+           `fun main() {
+              val x = 5
+              if (x < 5) {
+                 println("x less than 5!")
+              }
+            }`
+
+        verify(kotlin, expected)
     })
 })
 
@@ -146,6 +176,20 @@ describe('Test Ruby', () => {
             main`
 
         verify(ruby, expected)
+    })
+})
+
+describe('Test Rust', () => {
+    it('should generate an if', () => {
+        const expected = 
+           `fn main() {
+              let x = 5;
+              if x < 5 {
+                 println!("x less than 5!")
+              }
+            }`
+
+        verify(rust, expected)
     })
 })
 

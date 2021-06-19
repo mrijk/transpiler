@@ -74,6 +74,24 @@ describe('Test Go', () => {
     })
 })
 
+describe('Test Groovy', () => {
+    it('should generate an if/else', () => {
+        const expected = 
+           `def main() {
+              def x = 5
+              if (x < 5) {
+                 println "x less than 5!"
+              } else {
+                 println "x larger or equal to 5!"
+              }
+            }
+
+            main()`
+
+        verify(groovy, expected)
+    })
+})
+
 describe('Test Julia', () => {
     it('should generate an if/else', () => {
         const expected = 

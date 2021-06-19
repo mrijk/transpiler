@@ -13,7 +13,7 @@ const rust = {
     package
 }
 
-const {parseBody, parseExpr, parseFunctions} = require('./shared/shared')(rust)
+const {parseBody, parseExpr, parseFunctions, parsePredicate} = require('./shared/shared')(rust)
 
 const fmap = new Map([
     ['print', 'println!']
@@ -28,7 +28,7 @@ function* package({functions}) {
 }
 
 function* cond1([{predicate, body}]) {
-    yield `if ${predicate} {`
+    yield `if ${parsePredicate(predicate)} {`
     yield* parseBody(body)
     yield `}`
 }
@@ -75,7 +75,7 @@ function* fdecl({name, params, body}) {
 }
 
 function* decl({name, type, expr}) {
-    yield `let ${name} = ${parseExpr(expr)}`
+    yield `let ${name} = ${parseExpr(expr)};`
 }
 
 function* lambda({params, body}) {
