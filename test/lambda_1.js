@@ -71,3 +71,16 @@ describe('Test Python', () => {
         verify(python, ast, expected)
     })
 })
+
+
+describe('Test Swift', () => {
+    it('should generate a lambda variable', () => {
+        const expected = 
+           `func main() {
+              let f = {() in print("Hello Lambda!")}
+              f()
+            }`
+
+        verify(swift, ast, expected)
+    })
+})

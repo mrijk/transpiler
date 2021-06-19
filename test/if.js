@@ -148,3 +148,17 @@ describe('Test Ruby', () => {
         verify(ruby, expected)
     })
 })
+
+describe('Test Swift', () => {
+    it('should generate an if', () => {
+        const expected = 
+           `func main() {
+              let x = 5
+              if x < 5 {
+                 print("x less than 5!")
+              }
+            }`
+
+        verify(swift, expected)
+    })
+})

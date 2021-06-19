@@ -9,10 +9,11 @@ const swift = {
     decl,
     fcall,
     fdecl,
+    lambda,
     package,
 }
 
-const {parseBody, parseFunctions} = require('./shared/shared')(swift)
+const {parseBody, parseExpr, parseFunctions, parsePredicate} = require('./shared/shared')(swift)
 
 const fmap = new Map([
     ['print', 'print']
@@ -32,9 +33,9 @@ function* main({stmts}, parseBody) {
     yield '}'
 }
 
-function* cond1(options) {
-    yield `if ${options[0].predicate} {`
-    yield* parseBody(options[0].body)
+function* cond1([{predicate, body}]) {
+    yield `if ${parsePredicate(predicate)} {`
+    yield* parseBody(body)
     yield `}`
 }
 
@@ -79,8 +80,13 @@ function* fdecl({name, params, body}) {
     yield `}`
 }
 
-function* decl({name, type, value}, level) {
-    yield `let ${name} = ${value};`
+function* decl({name, type, expr}) {
+    yield `let ${name} = ${parseExpr(expr)}`
+}
+
+function* lambda({params, body}) {
+    const parsedBody = Array.from(parseBody(body, -1))
+    yield `{() in ${parsedBody}}`
 }
 
 module.exports = {
