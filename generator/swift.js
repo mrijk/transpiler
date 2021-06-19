@@ -41,15 +41,14 @@ function* cond1([{predicate, body}]) {
 
 function* condn(options) {
     const n = options.length - 1
-    yield `if ${options[0].predicate} {`
+    yield `if ${parsePredicate(options[0].predicate)} {`
     yield* parseBody(options[0].body)
-    yield '}'
     for (i = 1; i < n; i++) {
-        yield `else if ${options[i].predicate} {`
-        yield* parseBody(options[i].body)
-        yield '}'
+        const {predicate, body} = options[i]
+        yield `} else if ${parsePredicate(predicate)} {`
+        yield* parseBody(body)
     }
-    yield `else {`
+    yield `} else {`
     yield* parseBody(options[n].body)
     yield `}`
 }

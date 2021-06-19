@@ -34,7 +34,7 @@ function* cond1([{predicate, body}]) {
 }
 
 function* cond2(options) {
-    yield `if (${options[0].predicate}) {`
+    yield `if (${parsePredicate(options[0].predicate)}) {`
     yield* parseBody(options[0].body)
     yield `} else {`
     yield* parseBody(options[1].body)

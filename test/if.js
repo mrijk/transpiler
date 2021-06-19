@@ -17,25 +17,7 @@ const {rust} = require('../generator/rust')
 const {swift} = require('../generator/swift')
 
 const {ast} = require('../asts/ast2')
-
-function stringToArray(s) {
-    return s.split(/\r\n|\r|\n/)
-}
-
-function removeWhiteSpace(x) {
-    return filter(x.map(trim), x => !isEmpty(x))   
-}
-
-function compare(result, expected) {
-    const trimmedResult = removeWhiteSpace(result)
-    const expectedResult = removeWhiteSpace(stringToArray(expected))
-    expect(trimmedResult).to.eql(expectedResult)
-}
-
-function verify(generator, expected) {
-    const result = Array.from(generator.package(ast.package))
-    compare(result, expected)
-}
+const {verify} = require('./util')
 
 describe('Test C', () => {
     it('should generate an if', () => {
@@ -50,7 +32,7 @@ describe('Test C', () => {
               return 0;
             }`
 
-        verify(C, expected)
+        verify(C, ast, expected)
     })
 })
 
@@ -66,7 +48,7 @@ describe('Test Go', () => {
               }
             }`
 
-        verify(go, expected)
+        verify(go, ast, expected)
     })
 })
 
@@ -82,7 +64,7 @@ describe('Test Groovy', () => {
 
             main()`
 
-        verify(groovy, expected)
+        verify(groovy, ast, expected)
     })
 })
 
@@ -98,7 +80,7 @@ describe('Test Julia', () => {
 
             main()`
 
-        verify(julia, expected)
+        verify(julia, ast, expected)
     })
 })
 
@@ -112,7 +94,7 @@ describe('Test Kotlin', () => {
               }
             }`
 
-        verify(kotlin, expected)
+        verify(kotlin, ast, expected)
     })
 })
 
@@ -128,7 +110,7 @@ describe('Test Lua', () => {
 
             main()`
 
-        verify(lua, expected)
+        verify(lua, ast, expected)
     })
 })
 
@@ -144,7 +126,7 @@ describe('Test Node', () => {
   
             main()`
 
-        verify(node, expected)
+        verify(node, ast, expected)
     })
 })
 
@@ -160,7 +142,7 @@ describe('Test Perl', () => {
 
             main()`
 
-        verify(perl, expected)
+        verify(perl, ast, expected)
     })
 })
 
@@ -175,7 +157,7 @@ describe('Test Python', () => {
             if __name__ == "__main__":
                main()`
 
-        verify(python, expected)
+        verify(python, ast, expected)
     })
 })
 
@@ -191,7 +173,7 @@ describe('Test Ruby', () => {
 
             main`
 
-        verify(ruby, expected)
+        verify(ruby, ast, expected)
     })
 })
 
@@ -205,7 +187,7 @@ describe('Test Rust', () => {
               }
             }`
 
-        verify(rust, expected)
+        verify(rust, ast, expected)
     })
 })
 
@@ -219,6 +201,6 @@ describe('Test Swift', () => {
               }
             }`
 
-        verify(swift, expected)
+        verify(swift, ast, expected)
     })
 })
