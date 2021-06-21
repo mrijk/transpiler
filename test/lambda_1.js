@@ -44,6 +44,19 @@ describe('Test Julia', () => {
     })
 })
 
+describe('Test Groovy', () => {
+    it('should generate a lambda variable', () => {
+        const expected = 
+           `def main() {
+              def f = {println "Hello Lambda!"}
+              f
+            }
+            main()`
+
+        verify(groovy, ast, expected)
+    })
+})
+
 describe('Test Node', () => {
     it('should generate a lambda variable', () => {
         const expected = 

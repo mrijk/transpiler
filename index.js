@@ -1,6 +1,7 @@
 const _ = require('lodash')
 
 const {C} = require('./generator/c')
+const {clojure} = require('./generator/clojure')
 const {elixir} = require('./generator/elixir')
 const {go} = require('./generator/go')
 const {julia} = require('./generator/julia')
@@ -14,7 +15,7 @@ const {ruby} = require('./generator/ruby')
 const {rust} = require('./generator/rust')
 const {swift} = require('./generator/swift')
 
-const {ast} = require('./asts/ast5')
+const {ast} = require('./asts/lambda_2')
 
 
 function out(s, indent = 0) {

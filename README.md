@@ -5,6 +5,7 @@ Just an experimental project to see what you run into when generating several la
 ## Supported languages
 
 - C
+- Clojure
 - Elixir
 - GoLang
 - Groovy
@@ -25,7 +26,7 @@ List of languages that we may generate
 - C++
 - Java
 - C#
-- Clojure
+- Etc.
 - 
 ## Challenges
 

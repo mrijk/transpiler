@@ -12,7 +12,9 @@ const node = {
     fcall,
     fdecl,
     lambda,
-    package
+    mcall,
+    package,
+    seq
 }
 
 const {parseBody, parseExpr, parseFunctions, parsePredicate} = require('./shared/shared')(node)
@@ -87,6 +89,22 @@ function* decl({name, type, expr}) {
 function* lambda({params, body}) {
     const parsedBody = Array.from(parseBody(body, -1))
     yield `() => {${parsedBody}}`
+}
+
+function* mcall({name, obj, params}) {
+    const fname = fmap.get(name) || name
+    if (isEmpty(params)) {
+        yield `${obj}.${fname}()`
+    } else {
+        const paramString = join(params.map(param => parseExpr(param)))
+
+        yield `${obj}.${fname}(${paramString})`
+    }
+}
+
+function* seq({values}) {
+    const paramString = join(values.map(value => `"${value}"`))
+    yield `[${paramString}]`
 }
 
 module.exports = {

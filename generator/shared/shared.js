@@ -5,12 +5,18 @@ function* parseStmt(stmt, generator) {
     case 'cond':
         yield* generator.cond(stmt)
         break
-    case 'fcall':
-        yield* generator.fcall(stmt)
-        break
     case 'decl':
         yield* generator.decl(stmt)
         break
+    case 'fcall':
+        yield* generator.fcall(stmt)
+        break
+    case 'mcall':
+        yield* generator.mcall(stmt)
+        break;
+    case 'return':
+        yield parseExpr(generator, stmt.expr)
+        break;
     }
 }
 
@@ -40,6 +46,8 @@ function parseExpr(generator, expr) {
         return expr.value
     case 'lambda':
         return Array.from(generator.lambda(expr))
+    case 'seq':
+        return Array.from(generator.seq(expr))
     default:
         return expr.value
     }
