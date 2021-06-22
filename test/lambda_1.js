@@ -61,7 +61,7 @@ describe('Test Node', () => {
     it('should generate a lambda variable', () => {
         const expected = 
            `function main() {
-              const f = () => {console.log("Hello Lambda!")}
+              const f = () => console.log("Hello Lambda!")
               f()
             }
   

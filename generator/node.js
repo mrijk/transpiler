@@ -23,6 +23,12 @@ const fmap = new Map([
     ['print', 'console.log']
 ])
 
+const omap = new Map([
+    ['string', new Map([
+        ['length', 'length']   
+    ])]
+])
+
 function comment(comment) {
     return `// ${comment}`
 }
@@ -86,19 +92,39 @@ function* decl({name, type, expr}) {
     yield `const ${name} = ${parseExpr(expr)}`
 }
 
-function* lambda({params, body}) {
-    const parsedBody = Array.from(parseBody(body, -1))
-    yield `() => {${parsedBody}}`
+function paramsToString(params) {
+    return (isEmpty(params)) ? "" : params[0].name
 }
 
-function* mcall({name, obj, params}) {
-    const fname = fmap.get(name) || name
+function* lambda({params, body}) {
+    const parsedBody = Array.from(parseBody(body, -1))
+    const paramString = paramsToString(params)
+    
+    if (parsedBody.length === 1) {
+        yield `(${paramString}) => ${parsedBody}`
+    } else {
+        yield `() => {${parsedBody}}`
+    }
+}
+
+function methodLookup(name, type) {
+    const methods = omap.get(type)
+    if (methods === undefined) {
+        return name
+    } else {
+        return methods.get(name)
+    }
+}
+
+function* mcall({name, type, obj, params}) {
+    const mname = methodLookup(name, type)
+    
     if (isEmpty(params)) {
-        yield `${obj}.${fname}()`
+        yield `${obj}.${mname}`
     } else {
         const paramString = join(params.map(param => parseExpr(param)))
 
-        yield `${obj}.${fname}(${paramString})`
+        yield `${obj}.${mname}(${paramString})`
     }
 }
 

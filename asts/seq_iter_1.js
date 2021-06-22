@@ -28,15 +28,20 @@ const ast = {
                             params: [
                                 {
                                     t: "lambda",
-                                    params: [],
+                                    params: [
+                                        {
+                                            name: "s",
+                                            type: "string"
+                                        }
+                                    ],
                                     body: {
                                         stmts: [
                                             {
-                                                t: "return",
-                                                expr: {
-                                                    t: "const",
-                                                    value: "5"
-                                                }
+                                                t: "mcall",
+                                                name: "length",
+                                                obj: "s",
+                                                type: "string",
+                                                params: []
                                             }
                                         ]
                                     }
