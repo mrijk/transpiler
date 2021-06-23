@@ -199,7 +199,9 @@ describe('Test Swift', () => {
               if x < 5 {
                  print("x less than 5!")
               }
-            }`
+            }
+
+            main()`
 
         verify(swift, ast, expected)
     })

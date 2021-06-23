@@ -18,6 +18,7 @@ const node = {
 }
 
 const {parseBody, parseExpr, parseFunctions, parsePredicate} = require('./shared/shared')(node)
+const {methodLookup} = require('./shared/util')
 
 const fmap = new Map([
     ['print', 'console.log']
@@ -107,17 +108,8 @@ function* lambda({params, body}) {
     }
 }
 
-function methodLookup(name, type) {
-    const methods = omap.get(type)
-    if (methods === undefined) {
-        return name
-    } else {
-        return methods.get(name)
-    }
-}
-
 function* mcall({name, type, obj, params}) {
-    const mname = methodLookup(name, type)
+    const mname = methodLookup(omap, name, type)
     
     if (isEmpty(params)) {
         yield `${obj}.${mname}`

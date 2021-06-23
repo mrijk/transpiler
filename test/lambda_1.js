@@ -1,5 +1,4 @@
 const {verify} = require('./util')
-const {expect} = require('chai')
 
 const {C} = require('../generator/c')
 const {elixir} = require('../generator/elixir')
@@ -16,6 +15,16 @@ const {rust} = require('../generator/rust')
 const {swift} = require('../generator/swift')
 
 const {ast} = require('../asts/lambda_1')
+
+describe('Test C', () => {
+    it('*** Not implemented *** should generate a lambda variable', () => {
+    })
+})
+
+describe('Test Elixir', () => {
+    it('*** Not implemented *** should generate a lambda variable', () => {
+    })
+})
 
 describe('Test Go', () => {
     it('should generate a lambda variable', () => {
@@ -57,6 +66,32 @@ describe('Test Groovy', () => {
     })
 })
 
+describe('Test Kotlin', () => {
+    it('should generate a lambda variable', () => {
+        const expected =
+              `fun main() {
+                 val f = { println("Hello Lambda!") }
+                 f()
+               }`
+
+        verify(kotlin, ast, expected)
+    })
+})
+
+describe('Test Lua', () => {
+    it('should generate a lambda variable', () => {
+        const expected =
+              `function main()
+                 f = function() print("Hello Lambda!") end
+                 f()
+               end
+
+               main()`
+
+        verify(lua, ast, expected)
+    })
+})
+
 describe('Test Node', () => {
     it('should generate a lambda variable', () => {
         const expected = 
@@ -68,6 +103,20 @@ describe('Test Node', () => {
             main()`
 
         verify(node, ast, expected)
+    })
+})
+
+describe('Test Perl', () => {
+    it('should generate a lambda variable', () => {
+        const expected = 
+              `sub main() {
+                 $f = sub {print("Hello Lambda!");};
+                 $f->();
+               }
+
+               main()`
+
+        verify(perl, ast, expected)
     })
 })
 
@@ -85,6 +134,31 @@ describe('Test Python', () => {
     })
 })
 
+describe('Test Ruby', () => {
+    it('should generate a lambda variable', () => {
+        const expected = 
+              `def main()
+                 f = -> {puts "Hello Lambda!"}
+                 f.call
+              end
+
+              main`
+
+        verify(ruby, ast, expected)
+    })
+})
+
+describe('Test Rust', () => {
+    it('should generate a lambda variable', () => {
+        const expected = 
+              `fn main() {
+                 let f = || println!("Hello Lambda!");;
+                 f()
+               }`
+
+        verify(rust, ast, expected)
+    })
+})
 
 describe('Test Swift', () => {
     it('should generate a lambda variable', () => {
@@ -92,7 +166,9 @@ describe('Test Swift', () => {
            `func main() {
               let f = {() in print("Hello Lambda!")}
               f()
-            }`
+            }
+
+            main()`
 
         verify(swift, ast, expected)
     })

@@ -1,7 +1,5 @@
 const {isEmpty, map, filter, trim} = require('lodash')
 
-const {expect} = require('chai')
-
 const {C} = require('../generator/c')
 const {elixir} = require('../generator/elixir')
 const {go} = require('../generator/go')
@@ -207,7 +205,9 @@ describe('Test Swift', () => {
               } else {
                  print("x larger or equal to 5!")
               }
-            }`
+            }
+
+            main()`
 
         verify(swift, ast, expected)
     })

@@ -1,5 +1,4 @@
 const {verify} = require('./util')
-const {expect} = require('chai')
 
 const {C} = require('../generator/c')
 const {elixir} = require('../generator/elixir')
