@@ -5,6 +5,7 @@ const {elixir} = require('../generator/elixir')
 const {go} = require('../generator/go')
 const {julia} = require('../generator/julia')
 const {groovy} = require('../generator/groovy')
+const {java} = require('../generator/java')
 const {kotlin} = require('../generator/kotlin')
 const {lua} = require('../generator/lua')
 const {node} = require('../generator/node')
@@ -69,6 +70,24 @@ describe('Test Groovy', () => {
             main()`
 
         verify(groovy, ast, expected)
+    })
+})
+
+describe('Test Java', () => {
+    it('should generate an if', () => {
+        const expected = 
+           `public class HelloApp {
+              public void main() {
+                int x = 5;
+                if (x < 5) {
+                   System.out.println("x less than 5!");
+                } else {
+                   System.out.println("x larger or equal to 5!");
+                }
+              }
+            }`
+
+        verify(java, ast, expected)
     })
 })
 

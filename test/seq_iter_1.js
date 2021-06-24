@@ -55,7 +55,7 @@ describe('Test Node', () => {
     it('should iterate over a sequence', () => {
         const expected = 
            `function main() {
-              const l = [\"aap\",\"noot\",\"mies\"]
+              const l = ["aap","noot","mies"]
               l.map((s) => s.length)
             }
   

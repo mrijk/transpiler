@@ -1,12 +1,11 @@
 const {isEmpty, map, filter, trim} = require('lodash')
 
-const {expect} = require('chai')
-
 const {C} = require('../generator/c')
 const {elixir} = require('../generator/elixir')
 const {go} = require('../generator/go')
-const {julia} = require('../generator/julia')
 const {groovy} = require('../generator/groovy')
+const {java} = require('../generator/java')
+const {julia} = require('../generator/julia')
 const {kotlin} = require('../generator/kotlin')
 const {lua} = require('../generator/lua')
 const {node} = require('../generator/node')
@@ -37,6 +36,13 @@ describe('Test C', () => {
             }`
 
         verify(C, ast, expected)
+    })
+})
+
+describe('Test Elixir', () => {
+    it('*** Not implemented *** should generate an if/else if/else', () => {
+        const expected = ``
+
     })
 })
 
@@ -77,6 +83,26 @@ describe('Test Groovy', () => {
             main()`
 
         verify(groovy, ast, expected)
+    })
+})
+
+describe('Test Java', () => {
+    it('should generate an if', () => {
+        const expected = 
+           `public class HelloApp {
+              public void main() {
+                int x = 5;
+                if (x < 5) {
+                  System.out.println("x less than 5!");
+                } else if (x < 7) {
+                  System.out.println("x less than 7!");
+                } else {
+                  System.out.println("x something else");
+                }
+              }
+            }`
+
+        verify(java, ast, expected)
     })
 })
 
@@ -212,5 +238,42 @@ describe('Test Ruby', () => {
             main`
 
         verify(ruby, ast, expected)
+    })
+})
+
+describe('Test Rust', () => {
+    it('should generate an if/else if/else', () => {
+        const expected =
+              `fn main() {
+                 let x = 5;
+                 if x < 5 {
+                   println!("x less than 5!")
+                 } else if x < 7 {
+                   println!("x less than 7!")
+                 } else {
+                   println!("x something else")
+                }
+              }`
+        
+        verify(rust, ast, expected)
+    })
+})
+
+describe('Test Swift', () => {
+    it('should generate an if/else if/else', () => {
+        const expected =
+              `func main() {
+                 let x = 5
+                 if x < 5 {
+                   print("x less than 5!")
+                 } else if x < 7 {
+                   print("x less than 7!")
+                 } else {
+                   print("x something else")
+                 }
+               }
+
+               main()`
+        verify(swift, ast, expected)
     })
 })

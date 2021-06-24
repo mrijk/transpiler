@@ -10,13 +10,22 @@ const rust = {
     fcall,
     fdecl,
     lambda,
-    package
+    mcall,
+    package,
+    seq
 }
 
 const {parseBody, parseExpr, parseFunctions, parsePredicate} = require('./shared/shared')(rust)
+const {methodLookup} = require('./shared/util')
 
 const fmap = new Map([
     ['print', 'println!']
+])
+
+const omap = new Map([
+    ['string', new Map([
+        ['length', 'length']   
+    ])]
 ])
 
 function comment(comment) {
@@ -35,15 +44,14 @@ function* cond1([{predicate, body}]) {
 
 function* condn(options) {
     const n = options.length - 1
-    yield `if ${options[0].predicate} {`
+    yield `if ${parsePredicate(options[0].predicate)} {`
     yield* parseBody(options[0].body)
-    yield '}'
     for (i = 1; i < n; i++) {
-        yield `else if ${options[i].predicate} {`
-        yield* parseBody(options[i].body)
-        yield '}'
+        const {predicate, body} = options[i]
+        yield `} else if ${parsePredicate(predicate)} {`
+        yield* parseBody(body)
     }
-    yield `else {`
+    yield `} else {`
     yield* parseBody(options[n].body)
     yield `}`
 }
@@ -81,6 +89,23 @@ function* decl({name, type, expr}) {
 function* lambda({params, body}) {
     const parsedBody = Array.from(parseBody(body, -1))
     yield `|| ${parsedBody};`
+}
+
+function* mcall({name, type, obj, params}) {
+    const mname = methodLookup(omap, name, type)
+    
+    if (isEmpty(params)) {
+        yield `${obj}.${mname}`
+    } else {
+        const paramString = join(params.map(param => parseExpr(param)))
+
+        yield `${obj}.${mname}(${paramString})`
+    }
+}
+
+function* seq({values}) {
+    const paramString = join(values.map(value => `"${value}"`))
+    yield `[${paramString}]`
 }
 
 module.exports = {

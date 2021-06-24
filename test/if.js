@@ -1,11 +1,10 @@
 const {isEmpty, map, filter, trim} = require('lodash')
 
-const {expect} = require('chai')
-
 const {C} = require('../generator/c')
 const {elixir} = require('../generator/elixir')
 const {go} = require('../generator/go')
 const {groovy} = require('../generator/groovy')
+const {java} = require('../generator/java')
 const {julia} = require('../generator/julia')
 const {kotlin} = require('../generator/kotlin')
 const {lua} = require('../generator/lua')
@@ -65,6 +64,22 @@ describe('Test Groovy', () => {
             main()`
 
         verify(groovy, ast, expected)
+    })
+})
+
+describe('Test Java', () => {
+    it('should generate an if', () => {
+        const expected = 
+           `public class HelloApp {
+              public void main() {
+                int x = 5;
+                if (x < 5) {
+                   System.out.println("x less than 5!");
+                }
+              }
+            }`
+
+        verify(java, ast, expected)
     })
 })
 

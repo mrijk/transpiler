@@ -1,12 +1,10 @@
-// node index.js | julia
-
 const {isEmpty, join} = require('lodash')
 
-const julia = {
-    language: 'Julia',
-    extension: 'jl',
+const java = {
+    language: 'Java',
+    extionsion: 'java',
     
-    comment,    
+    comment,
     cond,
     decl,
     fcall,
@@ -15,79 +13,79 @@ const julia = {
     package
 }
 
-const {parseBody, parseExpr, parseFunctions, parsePredicate} = require('./shared/shared')(julia)
+const {parseBody, parseExpr, parseFunctions, parsePredicate} = require('./shared/shared')(java)
 
 const fmap = new Map([
-    ['print', 'println']
+    ['print', 'System.out.println']
 ])
 
 function comment(comment) {
-    return `# ${comment}`
+    return `// ${comment}`
 }
 
 function* package({functions}) {
+    yield 'public class HelloApp {'
     yield* parseFunctions(functions)
+    yield '}'
 }
 
 function* cond1([{predicate, body}]) {
-    yield `if ${parsePredicate(predicate)} {`
+    yield `if (${parsePredicate(predicate)}) {`
     yield* parseBody(body)
-    yield `}`
+    yield '}'   
 }
 
 function* condn(options) {
     const n = options.length - 1
-    yield `if ${parsePredicate(options[0].predicate)}`
+    yield `if (${parsePredicate(options[0].predicate)}) {`
     yield* parseBody(options[0].body)
     for (i = 1; i < n; i++) {
         const {predicate, body} = options[i]
-        yield `elseif ${parsePredicate(predicate)}`
+        yield `} else if (${parsePredicate(predicate)}) {`
         yield* parseBody(body)
     }
-    yield `else`
+    yield `} else {`
     yield* parseBody(options[n].body)
-    yield `end`
+    yield `}`
 }
 
 function* cond({options}) {
     switch (options.length) {
     case 1:
-        yield* cond1(options)
+        yield *cond1(options)
         break
     default:
-        yield* condn(options)
+        yield *condn(options)
     }
 }
 
 function* fcall({name, params}) {
     const fname = fmap.get(name) || name
     if (isEmpty(params)) {
-        yield `${fname}()`
+        yield `${fname}();`
     } else {
         const paramString = join(params)
-        yield `${fname}("${paramString}")`
+        yield `${fname}("${paramString}");`
     }
 }
 
 function* fdecl({name, params, body}) {
-    yield `function ${name}()`
+    yield `public void ${name}() {`
     yield* parseBody(body)
-    yield 'end'
-    if (name === 'main') {
-        yield ''
-        yield 'main()'
-    }
+    yield '}'
 }
 
 function* decl({name, type, expr}) {
-    yield `${name} = ${parseExpr(expr)}`
+    yield `${type} ${name} = ${parseExpr(expr)};`
 }
 
 function* lambda({params, body}) {
     const parsedBody = Array.from(parseBody(body, -1))
-    yield `() -> ${parsedBody}`
+    yield `{ ${parsedBody} }`
 }
 
 module.exports = {
-    julia
+    java
 }
+
+

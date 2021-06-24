@@ -4,8 +4,9 @@ const {C} = require('./generator/c')
 const {clojure} = require('./generator/clojure')
 const {elixir} = require('./generator/elixir')
 const {go} = require('./generator/go')
-const {julia} = require('./generator/julia')
 const {groovy} = require('./generator/groovy')
+const {java} = require('./generator/java')
+const {julia} = require('./generator/julia')
 const {kotlin} = require('./generator/kotlin')
 const {lua} = require('./generator/lua')
 const {node} = require('./generator/node')
@@ -15,7 +16,7 @@ const {ruby} = require('./generator/ruby')
 const {rust} = require('./generator/rust')
 const {swift} = require('./generator/swift')
 
-const {ast} = require('./asts/seq_iter_1')
+const {ast} = require('./asts/ast2')
 
 
 function out(s, indent = 0) {
@@ -40,4 +41,4 @@ function generate({package}, generator) {
     parseMain(package, generator)
 }
 
-generate(ast, swift)
+generate(ast, java)
