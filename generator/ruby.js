@@ -15,7 +15,7 @@ const ruby = {
     package
 }
 
-const {parseBody, parseExpr, parseFunctions, parsePredicate} = require('./shared/shared')(ruby)
+const {callParamsToString, parseBody, parseExpr, parseFunctions, parsePredicate} = require('./shared/shared')(ruby)
 
 const fmap = new Map([
     ['print', 'puts']
@@ -40,8 +40,9 @@ function* condn(options) {
     yield `if ${parsePredicate(options[0].predicate)}`
     yield* parseBody(options[0].body)
     for (i = 1; i < n; i++) {
-        yield `elseif ${parsePredicate(options[i].predicate)}`
-        yield* parseBody(options[i].body)
+        const {predicate, body} = options[i]
+        yield `elseif ${parsePredicate(predicate)}`
+        yield* parseBody(body)
     }
     yield `else`
     yield* parseBody(options[n].body)
@@ -60,17 +61,18 @@ function* cond({options}) {
 
 function* fcall({name, params}) {
     const fname = fmap.get(name) || name
+    const paramString = callParamsToString(params)
     // TODO: if this is a Lambda, Ruby needs .call
-    if (isEmpty(params)) {
-        yield `${fname}`
-    } else {
-        const paramString = join(params)
-        yield `${fname} "${paramString}"`
-    }
+    yield `${fname} ${paramString}`
+}
+
+function paramsToString(params) {
+    return (isEmpty(params)) ? "" : params[0].name
 }
 
 function* fdecl({name, params, body}) {
-    yield `def ${name}()`
+    const paramString = paramsToString(params)
+    yield `def ${name}(${paramString})`
     yield* parseBody(body)
     yield `end`
     if (name === 'main') {

@@ -12,10 +12,11 @@ const lua = {
     fcall,
     fdecl,
     lambda,
-    package
+    package,
+    returns
 }
 
-const {parseBody, parseExpr, parseFunctions, parsePredicate} = require('./shared/shared')(lua)
+const {callParamsToString, parseBody, parseExpr, parseFunctions, parsePredicate} = require('./shared/shared')(lua)
 
 const fmap = new Map([
     ['print', 'print']
@@ -62,16 +63,17 @@ function* cond({options}) {
 
 function* fcall({name, params}) {
     const fname = fmap.get(name) || name
-    if (isEmpty(params)) {
-        yield `${fname}()`
-    } else {
-        const paramString = join(params)
-        yield `${fname}("${paramString}")`
-    }
+    const paramString = callParamsToString(params)
+    yield `${fname}(${paramString})`
+}
+
+function paramsToString(params) {
+    return (isEmpty(params)) ? "" : params[0].name
 }
 
 function* fdecl({name, params, returns, body}) {
-    yield `function ${name}()`
+    const paramString = paramsToString(params)
+    yield `function ${name}(${paramString})`
     yield* parseBody(body)
     yield 'end'
     if (name === 'main') {
@@ -87,6 +89,10 @@ function* decl({name, type, expr}) {
 function* lambda({params, body}) {
     const parsedBody = Array.from(parseBody(body, -1))
     yield `function() ${parsedBody} end`
+}
+
+function *returns(expr) {
+    yield `return ${parseExpr(expr)}`
 }
 
 module.exports = {

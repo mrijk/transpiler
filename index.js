@@ -41,4 +41,4 @@ function generate({package}, generator) {
     parseMain(package, generator)
 }
 
-generate(ast, python)
+generate(ast, lua)
