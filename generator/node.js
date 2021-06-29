@@ -1,6 +1,6 @@
 // node index.js | node
 
-const {isEmpty, join} = require('lodash')
+const {isEmpty, isString, join, map} = require('lodash')
 
 const node = {
     language: 'Node',
@@ -14,10 +14,11 @@ const node = {
     lambda,
     mcall,
     package,
+    returns,
     seq
 }
 
-const {parseBody, parseExpr, parseFunctions, parsePredicate} = require('./shared/shared')(node)
+const {callParamsToString, parseBody, parseExpr, parseFunctions, parsePredicate} = require('./shared/shared')(node)
 const {methodLookup} = require('./shared/util')
 
 const fmap = new Map([
@@ -49,10 +50,9 @@ function* condn(options) {
     yield `if (${parsePredicate(options[0].predicate)}) {`
     yield* parseBody(options[0].body)
     for (i = 1; i < n; i++) {
-        yield `} else if (${parsePredicate(options[i].predicate)}) {`
-        yield* parseBody(options[i].body)
-        if (i != n - 1)
-            yield '}'
+        const {predicate, body} = options[i]
+        yield `} else if (${parsePredicate(predicate)}) {`
+        yield* parseBody(body)
     }
     yield `} else {`
     yield* parseBody(options[n].body)
@@ -71,12 +71,8 @@ function* cond({options}) {
 
 function* fcall({name, params}) {
     const fname = fmap.get(name) || name
-    if (isEmpty(params)) {
-        yield `${fname}()`
-    } else {
-        const paramString = join(params)
-        yield `${fname}("${paramString}")`
-    }
+    const paramString = callParamsToString(params)
+    yield `${fname}(${paramString})`
 }
 
 function paramsToString(params) {
@@ -119,6 +115,10 @@ function* mcall({name, type, obj, params}) {
 
         yield `${obj}.${mname}(${paramString})`
     }
+}
+
+function *returns(expr) {
+    yield `return ${parseExpr(expr)}`
 }
 
 function* seq({values}) {

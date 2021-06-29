@@ -21,7 +21,7 @@ const ast = {
                             options: [
                                 {
                                     predicate: {
-                                        op: "=",
+                                        op: "==",
                                         expr1: {
                                             t: "sym",
                                             value: "n"
@@ -47,11 +47,17 @@ const ast = {
                                     body: {
                                         stmts: [
                                             {
-                                                t: "fcall",
-                                                name: "factorial",
-                                                params: [
-                                                    6
-                                                ]
+                                                t: "return",
+                                                expr: {
+                                                    t: "fcall",
+                                                    name: "factorial",
+                                                    params: [
+                                                        {
+                                                            t: "expr",
+                                                            value: "n - 1"
+                                                        }
+                                                    ]
+                                                }
                                             }
                                         ]
                                     }
@@ -69,10 +75,19 @@ const ast = {
                     stmts: [
                         {
                             t: "fcall",
-                            name: "factorial",
+                            name: "print",
                             params: [
-                                5
-                            ]                                                
+                                {
+                                    t: "fcall",
+                                    name: "factorial",
+                                    params: [
+                                        {
+                                            t: "const",
+                                            value: 5
+                                        }
+                                    ]
+                                }
+                            ]
                         }
                     ]
                 }

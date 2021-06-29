@@ -1,6 +1,6 @@
 // node index.js | python
 
-const {isEmpty, join} = require('lodash')
+const {isEmpty, isString, join, map} = require('lodash')
 
 const python = {
     language: 'Python',
@@ -12,10 +12,11 @@ const python = {
     fcall,
     fdecl,
     lambda,
-    package
+    package,
+    returns
 }
 
-const {parseBody, parseExpr, parseFunctions, parsePredicate} = require('./shared/shared')(python)
+const {callParamsToString, parseBody, parseExpr, parseFunctions, parsePredicate} = require('./shared/shared')(python)
 
 const fmap = new Map([
     ['print', 'print']
@@ -39,8 +40,9 @@ function* condn(options) {
     yield `if ${parsePredicate(options[0].predicate)}:`
     yield* parseBody(options[0].body)
     for (i = 1; i < n; i++) {
-        yield `elif ${parsePredicate(options[i].predicate)}:`
-        yield* parseBody(options[i].body)
+        const {predicate, body} = options[i]
+        yield `elif ${parsePredicate(predicate)}:`
+        yield* parseBody(body)
     }
     yield `else:`
     yield* parseBody(options[n].body)
@@ -58,16 +60,17 @@ function* cond({options}) {
 
 function* fcall({name, params}) {
     const fname = fmap.get(name) || name
-    if (isEmpty(params)) {
-        yield `${fname}()`
-    } else {
-        const paramString = join(params)
-        yield `${fname}("${paramString}")`
-    }
+    const paramString = callParamsToString(params)
+    yield `${fname}(${paramString})`
+}
+
+function paramsToString(params) {
+    return (isEmpty(params)) ? "" : params[0].name
 }
 
 function* fdecl({name, params, body}) {
-    yield `def ${name}():`
+    const paramString = paramsToString(params)
+    yield `def ${name}(${paramString}):`
     yield* parseBody(body)
     if (name === 'main') {
         yield ''
@@ -83,6 +86,10 @@ function* decl({name, type, expr}) {
 function* lambda({params, body}) {
     const parsedBody = Array.from(parseBody(body, -1))
     yield `lambda : ${parsedBody}`
+}
+
+function* returns(expr) {
+    yield `return ${parseExpr(expr)}`
 }
 
 module.exports = {
