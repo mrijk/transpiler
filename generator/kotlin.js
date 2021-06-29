@@ -10,13 +10,22 @@ const kotlin = {
     fcall,
     fdecl,
     lambda,
-    package
+    mcall,
+    package,
+    seq
 }
 
 const {parseBody, parseExpr, parseFunctions, parsePredicate} = require('./shared/shared')(kotlin)
+const {methodLookup} = require('./shared/util')
 
 const fmap = new Map([
     ['print', 'println']
+])
+
+const omap = new Map([
+    ['string', new Map([
+        ['length', 'length']   
+    ])]
 ])
 
 function comment(comment) {
@@ -90,6 +99,23 @@ function* decl({name, type, expr}) {
 function* lambda({params, body}) {
     const parsedBody = Array.from(parseBody(body, -1))
     yield `{ ${parsedBody} }`
+}
+
+function* mcall({name, type, obj, params}) {
+    const mname = methodLookup(omap, name, type)
+    
+    if (isEmpty(params)) {
+        yield `${obj}.${mname}`
+    } else {
+        const paramString = join(params.map(param => parseExpr(param)))
+
+        yield `${obj}.${mname}(${paramString})`
+    }
+}
+
+function* seq({values}) {
+    const paramString = join(values.map(value => `"${value}"`))
+    yield `listOf(${paramString})`
 }
 
 module.exports = {

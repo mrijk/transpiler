@@ -58,7 +58,7 @@ function parsePredicate(generator, {op, expr1, expr2}) {
 }
 
 function indent(level, s) {
-    return  ' '.repeat(level * 2) + s
+    return ' '.repeat(level * 2) + s
 }
 
 function shared(gen) {

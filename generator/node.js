@@ -79,8 +79,13 @@ function* fcall({name, params}) {
     }
 }
 
+function paramsToString(params) {
+    return (isEmpty(params)) ? "" : params[0].name
+}
+
 function* fdecl({name, params, body}) {
-    yield `function ${name}() {`
+    const paramString = paramsToString(params)
+    yield `function ${name}(${paramString}) {`
     yield* parseBody(body)
     yield `}`
     if (name === 'main') {
@@ -91,10 +96,6 @@ function* fdecl({name, params, body}) {
 
 function* decl({name, type, expr}) {
     yield `const ${name} = ${parseExpr(expr)}`
-}
-
-function paramsToString(params) {
-    return (isEmpty(params)) ? "" : params[0].name
 }
 
 function* lambda({params, body}) {
